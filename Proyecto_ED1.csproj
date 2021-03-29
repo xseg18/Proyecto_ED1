@@ -4,4 +4,15 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="ELineales\**" />
+    <Compile Remove="E_Arboles\**" />
+    <Content Remove="ELineales\**" />
+    <Content Remove="E_Arboles\**" />
+    <EmbeddedResource Remove="ELineales\**" />
+    <EmbeddedResource Remove="E_Arboles\**" />
+    <None Remove="ELineales\**" />
+    <None Remove="E_Arboles\**" />
+  </ItemGroup>
+
 </Project>
