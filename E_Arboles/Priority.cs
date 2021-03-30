@@ -6,7 +6,7 @@ using System.Text;
 
 namespace E_Arboles
 {
-    public class PriorityQueue<T, Y> where T : IComparable
+    public class PriorityQueue<T, Y, int c> where T : IComparable where Y: IEnumerable
     {
         public class Node
         {
@@ -21,6 +21,7 @@ namespace E_Arboles
             }
         }
         Node root;
+
         public void Add(T k, Y, d)
         {
             Node a = new Node(k, d);
@@ -38,11 +39,12 @@ namespace E_Arboles
             if(Root.Left == null)
             {
                 Root.left = add;
-
+                Last = add;
             }
             else if(Root.right == null)
             {
                 Root.Right = add;
+                Last = add;
             }
             else
             {
@@ -62,7 +64,7 @@ namespace E_Arboles
         {
             if(Root != null)
             {
-                if(Root.Key < Root.Left.Key)
+                if(Root.Key > Root.Left.Key)
                 {
                     Node safe = Root;
                     Root.Key = Root.Left.Key;
@@ -70,7 +72,7 @@ namespace E_Arboles
                     Root.Left.Key = safe.Key;
                     Root.Left.Data = safe.Data;
                 }
-                else if(Root.Key < Root.Right.Key)
+                else if(Root.Key > Root.Right.Key)
                 {
                     Node safe = Root;
                     Root.Key = Root.Right.Key;
@@ -80,6 +82,59 @@ namespace E_Arboles
                 }
                 Balance(Root.Left);
                 Balance(Root.Right);
+            }
+        }
+
+        public Y Peek()
+        {
+            return root.Data;
+        }
+        public Y Pop()
+        {
+            Node safe = root;
+            Node remp = GetLast(root);
+            root.Key = remp.Key;
+            root.Data = remp.Data;
+            GetLast(root) = null;
+            Balance(root);
+            return safe.Data;
+        }
+        Node GetLast(Node prev)
+        {
+            if(top.Left == null && top.Right == null)
+            {
+                return top;
+            }
+            else
+            {
+                GetLast(top.Left);
+                GetLast(top.Right);
+            }
+        }
+
+        public Y[] ToArray()
+        {
+            return ToArray(0, root);
+        }
+        Y[] ToArray(int i, Node top)
+        {
+
+        }
+        int Height(Node top)
+        {
+            if(top == null)
+            {
+                return 0;
+            }
+            else
+            {
+                int rheight = Height(top.right);
+                int lheight = Height(top.left);
+                if (rheight > lheight)
+                {
+                    return rheight + 1;
+                }
+                else return lheight + 1;s
             }
         }
     }
