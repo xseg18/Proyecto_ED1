@@ -28,13 +28,13 @@ namespace Proyecto_ED1.Controllers
         {
             
             E_Arboles.PriorityQueue<int, string> queue = new E_Arboles.PriorityQueue<int, string>(9);
-            queue.Add(3, "4");
-            queue.Add(5, "t");
-            queue.Add(4, "S");
-            queue.Add(2, "g");
-            queue.Add(7, "f");
-            queue.Add(8, "d");
-            queue.Add(1, "a");
+            queue.Add(3, "3");
+            queue.Add(5, "5");
+            queue.Add(4, "4");
+            queue.Add(2, "2");
+            queue.Add(7, "7");
+            queue.Add(8, "8");
+            queue.Add(1, "1");
             queue.Pop();
             return View();
         }

@@ -89,6 +89,7 @@ namespace E_Arboles
                 {
                     if (Root.Key.CompareTo(Root.Left.Key) > 0)
                     {
+                        Swap(Array.IndexOf(Queue, Root.Data), Array.IndexOf(Queue, Root.Left.Data));
                         T k = Root.Key;
                         Y d = Root.Data;
                         Root.Key = Root.Left.Key;
@@ -105,6 +106,7 @@ namespace E_Arboles
                 {
                     if (Root.Key.CompareTo(Root.Right.Key) > 0)
                     {
+                        Swap(Array.IndexOf(Queue, Root.Data), Array.IndexOf(Queue, Root.Right.Data));
                         T k = Root.Key;
                         Y d = Root.Data;
                         Root.Key = Root.Right.Key;
@@ -122,46 +124,34 @@ namespace E_Arboles
 
             }
         }
+        void Swap(int pos1, int pos2)
+        {
+            Y safe = Queue[pos1];
+            Queue[pos1] = Queue[pos2];
+            Queue[pos2] = safe;
+        }
         public Y Peek()
         {
             return root.Data;
         }
         public Y Pop()
         {
-            Node safe = root;
+            Y safe = root.Data;
             Node remp = FindLast();
             root.Key = remp.Key;
             root.Data = remp.Data;
             Balance(root, null);
-            return safe.Data;
+            return safe;
         }
         
         Node FindLast()
         {
-            Y last = default(Y);
-            decimal pos = 0;
-            for (int i = 1; i < Queue.Length; i++)
-            {
-                if (i + 1 < Queue.Length)
-                {
-                    if (Queue[i + 1] == null)
-                    {
-                        last = Queue[i];
-                        pos = i;
-                        break;
-                    }
-                }
-                else
-                {
-                    last = Queue[i];
-                    pos = i;
-                }
-            }
-            decimal parentpos = Math.Floor(pos / 2);
+            Y last = Queue[pos - 1];
+            decimal parentpos = Math.Floor(Convert.ToDecimal((pos - 1) / 2));
             Y parentdata = Queue[Convert.ToInt32(parentpos)];
             Node newroot = Find(last, root);
             Node oldroot = Find(parentdata, root);
-            if(pos%2 == 0)
+            if((pos-1)%2 == 0)
             {
                 oldroot.Left = null;
             }
@@ -169,6 +159,7 @@ namespace E_Arboles
             {
                 oldroot.Right = null;
             }
+            pos--;
             return newroot;
         }
         Node Find(Y data, Node top)
@@ -194,22 +185,9 @@ namespace E_Arboles
                 return null;
             }
         }
-        int Height(Node top)
+        public Y[] ReturnQueue()
         {
-            if(top == null)
-            {
-                return 0;
-            }
-            else
-            {
-                int rheight = Height(top.Right);
-                int lheight = Height(top.Left);
-                if (rheight > lheight)
-                {
-                    return rheight + 1;
-                }
-                else return lheight + 1;
-            }
+            return Queue;
         }
     }
 }
