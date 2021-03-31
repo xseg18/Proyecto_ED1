@@ -15,4 +15,13 @@
     <None Remove="E_Arboles\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="ELineales\ELineales.csproj" />
+    <ProjectReference Include="E_Arboles\E_Arboles.csproj" />
+  </ItemGroup>
+
+  
+
+  
+
 </Project>
