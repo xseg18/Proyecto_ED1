@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace Proyecto_ED1.Controllers
 {
@@ -32,6 +33,18 @@ namespace Proyecto_ED1.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public int getHashcode(string key)
+        {
+            byte[] code = Encoding.ASCII.GetBytes(key);
+            int hash = 0;
+            for (int i = 0; i < code.Count(); i++)
+            {
+                hash += Convert.ToInt32(code[i]);
+            }
+            hash = (hash * code.Count()) % 50;
+            return hash;
         }
     }
 }
