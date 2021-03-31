@@ -25,6 +25,16 @@ namespace Proyecto_ED1.Controllers
 
         public IActionResult Privacy()
         {
+            
+            E_Arboles.PriorityQueue<int, string> queue = new E_Arboles.PriorityQueue<int, string>();
+            queue.Add(3, "S");
+            queue.Add(5, "S");
+            queue.Add(4, "S");
+            queue.Add(2, "S");
+            queue.Add(7, "S");
+            queue.Add(8, "S");
+            queue.Add(1, "S");
+            queue.Pop();
             return View();
         }
 

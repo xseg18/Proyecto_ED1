@@ -3,48 +3,70 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
 namespace E_Arboles
 {
-    public class PriorityQueue<T, Y, int c> where T : IComparable where Y: IEnumerable
+    public class PriorityQueue<T, Y> where T : IComparable   
     {
         public class Node
         {
-            Node Right;
-            Node Left;
-            T Key;
-            Y Data;
-            Node(Y k, T d)
+            public Node Right;
+            public Node Left;
+            public Node Parent;
+            T Keys;
+            Y Datas;
+            public Node(T k, Y d)
             {
-                Key = k;
-                Data = d;
+                Keys = k;
+                Datas = d;
+            }
+            public T Key
+            {
+                get => Keys;
+                set => Keys = value;
+            }
+            public Y Data
+            {
+                get => Datas;
+                set => Datas = value;
             }
         }
-        Node root;
 
-        public void Add(T k, Y, d)
+        Node root;
+        Y[] Queue;
+        int pos = 1;
+        public PriorityQueue(int x)
+        {
+            Queue = new Y[x];
+        }
+        public void Add(T k, Y d)
         {
             Node a = new Node(k, d);
             if(root == null)
             {
                 root = a;
+                Queue[pos] = root.Data;
+                pos++;
             }
             else
             {
-                Add(root, a)
+                Add(root, a);
             }
         }
         void Add(Node Root, Node add)
         {
             if(Root.Left == null)
             {
-                Root.left = add;
-                Last = add;
+                Root.Left = add;
+                add.Parent = Root;
+                Queue[pos] = add.Data;
+                pos++;
             }
-            else if(Root.right == null)
+            else if(Root.Right == null)
             {
                 Root.Right = add;
-                Last = add;
+                add.Parent = Root;
+                Queue[pos] = add.Data;
+                pos++;
             }
             else
             {
@@ -57,34 +79,49 @@ namespace E_Arboles
                     Add(Root.Right, add);
                 }
             }
-            Balance(root);
+            Balance(root, null);
         }
-
-        void Balance(Node Root)
+        void Balance(Node Root, Node prev)
         {
             if(Root != null)
             {
-                if(Root.Key > Root.Left.Key)
+                if(Root.Left != null)
                 {
-                    Node safe = Root;
-                    Root.Key = Root.Left.Key;
-                    Root.Data = Root.Left.Data;
-                    Root.Left.Key = safe.Key;
-                    Root.Left.Data = safe.Data;
+                    if(Root.Key.CompareTo(Root.Left.Key) > 0)
+                    {
+                        T k = Root.Key;
+                        Y d = Root.Data;
+                        Root.Key = Root.Left.Key;
+                        Root.Data = Root.Left.Data;
+                        Root.Left.Key = k;
+                        Root.Left.Data = d;
+                        if (Root != root)
+                        {
+                            Balance(prev, prev.Parent);
+                        }
+                    }
                 }
-                else if(Root.Key > Root.Right.Key)
+                if (Root.Right != null)
                 {
-                    Node safe = Root;
-                    Root.Key = Root.Right.Key;
-                    Root.Data = Root.Right.Data;
-                    Root.Right.Key = safe.Key;
-                    Root.Right.Data = safe.Data;
+                    if (Root.Key.CompareTo(Root.Right.Key) > 0)
+                    {
+                        T k = Root.Key;
+                        Y d = Root.Data;
+                        Root.Key = Root.Right.Key;
+                        Root.Data = Root.Right.Data;
+                        Root.Right.Key = k;
+                        Root.Right.Data = d;
+                        if (Root != root)
+                        {
+                            Balance(prev, prev.Parent);
+                        }
+                    } 
                 }
-                Balance(Root.Left);
-                Balance(Root.Right);
+                Balance(Root.Left, Root);
+                Balance(Root.Right, Root);
+
             }
         }
-
         public Y Peek()
         {
             return root.Data;
@@ -92,34 +129,75 @@ namespace E_Arboles
         public Y Pop()
         {
             Node safe = root;
-            Node remp = GetLast(root);
             root.Key = remp.Key;
             root.Data = remp.Data;
-            GetLast(root) = null;
-            Balance(root);
+            remp = null;
+            Balance(root, null);
             return safe.Data;
         }
-        Node GetLast(Node prev)
+        Node GetLast(Node top)
         {
-            if(top.Left == null && top.Right == null)
+            if (top.Left == null && top.Right == null)
             {
-                return top;
-            }
+                Node safe = top;
+                top = null;
+                return safe;
+            } 
             else
             {
+                Node last = GetLast(top.Left);
                 GetLast(top.Left);
                 GetLast(top.Right);
             }
         }
-
-        public Y[] ToArray()
+        int Count(Node top)
         {
-            return ToArray(0, root);
+            int sum = 1;
+            if (top.Left != null)
+            {
+               sum += Count(top.Left);
+            }
+            if (top.Right != null)
+            {
+                sum += Count(top.Right);
+            }
+            return sum;
         }
-        Y[] ToArray(int i, Node top)
+        void ToArray()
         {
+            Node[] queue = new Node[Count(root) + 1];
+            int i = 0;
+            
+            while(i <= queue.Length)
+            {
+                i++;
+                if(i == 1)
+                {
+                    queue[i] = root;
+                    queue[i * 2] = root.Left;
+                    queue[(i * 2) + 1] = root.Right;
 
+                }
+                else
+                {
+
+                }
+            }
         }
+
+        //Y[] ToArray(int i, Node top, Array queue)
+        //{
+        //    if (top != null)
+        //    {
+        //        queue[i] = top.Data;
+        //        queue[i * 2] = top.Left.Data;
+        //        queue[(i * 2) + 1] = top.Right.Data;
+        //        ToArray(i * 2, top.Left, queue);
+        //        ToArray((i * 2) + 1, top.Right, queue);
+        //        queue[1]
+        //    }
+        //    return queue;
+        //}
         int Height(Node top)
         {
             if(top == null)
@@ -128,13 +206,13 @@ namespace E_Arboles
             }
             else
             {
-                int rheight = Height(top.right);
-                int lheight = Height(top.left);
+                int rheight = Height(top.Right);
+                int lheight = Height(top.Left);
                 if (rheight > lheight)
                 {
                     return rheight + 1;
                 }
-                else return lheight + 1;s
+                else return lheight + 1;
             }
         }
     }
