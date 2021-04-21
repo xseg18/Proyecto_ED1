@@ -73,7 +73,7 @@ namespace Proyecto_ED1.Controllers
             {
                 hash += Convert.ToInt32(code[i]);
             }
-            hash = (hash * code.Count()) % 50;
+            hash = (hash * code.Count()) % 20;
             return hash;
         }
     }
