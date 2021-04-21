@@ -1,0 +1,48 @@
+﻿@model Proyecto_ED1.Models.Pacient
+@{
+    ViewData["Title"] = "Inscripción";
+}
+<script type="text/javascript" src ="~/js/State_City.js"></script>
+<div class="text-center">
+    <h3 class="display-4">Inscripción de Pacientes</h3>
+    <hr />
+    <p class ="text-center"> A continuación encontrará un formulario para ingresar la información requerida del paciente.</p>
+    <div class = "row">
+        <div class="col-md-4">
+            <form asp-action="Inscription">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LName" class="control-label"></label>
+                    <input asp-for="LName" class="form-control" />
+                    <span asp-validation-for="LName" class="text-danger"></span>
+                </div>
+                <div class="form-group align-content-center">
+                    <label asp-for="CUI" class="control-label"></label>
+                    <input asp-for="CUI" class="form-control" />
+                    <span asp-validation-for="CUI" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Departamento" class="control-label"></label>
+                    <select onchange="set_City(this,country)" size="1" name="region">
+                        <option value="" selected="selected">Seleccione un Departamento</option>
+                        <option value=""></option>
+                        <script type="text/javascript">
+                            setState(this);
+                        </script>
+                    </select>
+                    <span asp-validation-for="Departamento" class="text-danger text-left"></span>
+                    <label asp-for="Municipio" class="control-label"></label>
+                    <select name="country" size="1" onchange="set_city_state(this)"></select>
+                    <span asp-validation-for="Municipio" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

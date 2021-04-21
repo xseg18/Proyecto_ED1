@@ -7,6 +7,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text;
+using Proyecto_ED1.Models.Data;
+using System.IO;
+using System.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Proyecto_ED1.Controllers
 {
@@ -26,19 +31,34 @@ namespace Proyecto_ED1.Controllers
 
         public IActionResult Privacy()
         {
-            
-            E_Arboles.PriorityQueue<int, string> queue = new E_Arboles.PriorityQueue<int, string>(9);
-            queue.Add(3, "3");
-            queue.Add(5, "5");
-            queue.Add(4, "4");
-            queue.Add(2, "2");
-            queue.Add(7, "7");
-            queue.Add(8, "8");
-            queue.Add(1, "1");
-            queue.Pop();
             return View();
         }
-
+        public ActionResult Inscription()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Inscription(IFormCollection collection)
+        {
+            try
+            {
+                var newPacient = new Models.Pacient
+                {
+                    Name = collection["Name"],
+                    LName = collection["LName"],
+                    Departamento = collection["Departamento"],
+                    Municipio = collection["Municipio"],
+                    CUI = Convert.ToInt32(collection["CUI"])
+                };
+                //agregar a arboles AVL
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View(Error());
+            }
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
