@@ -107,7 +107,7 @@ namespace Proyecto_ED1.Controllers
                 //Prioridad 9: chavo rukos
                 else if (newPacient.Age == "18-39")
                 {
-                    newPacient.Priority = 8;
+                    newPacient.Priority = 9;
                     goto skip;
                 }
             skip:
