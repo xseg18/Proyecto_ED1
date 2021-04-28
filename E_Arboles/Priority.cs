@@ -138,29 +138,43 @@ namespace E_Arboles
         {
             Y safe = root.Data;
             Node remp = FindLast();
-            root.Key = remp.Key;
-            root.Data = remp.Data;
-            Balance(root, null);
-            return safe;
-        }
-        
-        Node FindLast()
-        {
-            Y last = Queue[pos - 1];
-            decimal parentpos = Math.Floor(Convert.ToDecimal((pos - 1) / 2));
-            Y parentdata = Queue[Convert.ToInt32(parentpos)];
-            Node newroot = Find(last, root);
-            Node oldroot = Find(parentdata, root);
-            if((pos-1)%2 == 0)
+            if (remp != root)
             {
-                oldroot.Left = null;
+                root.Key = remp.Key;
+                root.Data = remp.Data;
+                Balance(root, null);
             }
             else
             {
-                oldroot.Right = null;
+                root = null;
             }
-            pos--;
-            return newroot;
+            return safe;
+        }
+
+        Node FindLast()
+        {
+            if (pos - 1 != 1)
+            {
+                Y last = Queue[pos - 1];
+                decimal parentpos = Math.Floor(Convert.ToDecimal((pos - 1) / 2));
+                Y parentdata = Queue[Convert.ToInt32(parentpos)];
+                Node newroot = Find(last, root);
+                Node oldroot = Find(parentdata, root);
+                if ((pos - 1) % 2 == 0)
+                {
+                    oldroot.Left = null;
+                }
+                else
+                {
+                    oldroot.Right = null;
+                }
+                pos--;
+                return newroot;
+            }
+            else
+            {
+                return root;
+            }
         }
         Node Find(Y data, Node top)
         {
@@ -173,7 +187,7 @@ namespace E_Arboles
                 else
                 {
                     Node found = Find(data, top.Left);
-                    if(found == null)
+                    if (found == null)
                     {
                         found = Find(data, top.Right);
                     }

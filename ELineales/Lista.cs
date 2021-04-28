@@ -11,14 +11,14 @@ namespace ELineales
 			public Node Next;
 			public T Data;
 		}
-		Node Top = new Node();
+		Node Top;
 
 		public void Add(T item)
 		{
 			Node agregar = new Node();
 			agregar.Data = item;
 			agregar.Next = null;
-			if (Top != null)
+			if (Top == null)
 			{
 				Top = agregar;
 			}
@@ -103,7 +103,7 @@ namespace ELineales
 			}
 		}
 		private IEnumerable<T> Events()
-        {
+		{
 			Node temp = Top;
 			while (temp != null)
 			{
@@ -111,18 +111,18 @@ namespace ELineales
 				temp = temp.Next;
 			}
 		}
-		public IEnumerator<T> GetEnumerator() 
-		{ 
+		public IEnumerator<T> GetEnumerator()
+		{
 
 			return Events().GetEnumerator();
 		}
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+		IEnumerator IEnumerable.GetEnumerator()
+		{
 			return GetEnumerator();
-        }
+		}
 
-        public T this[int index]
+		public T this[int index]
 		{
 			get
 			{
@@ -163,12 +163,8 @@ namespace ELineales
 		}
 		public void Clear()
 		{
-			Node temp = Top;
-			while (temp != null)
-			{
-				temp = null;
-				temp = temp.Next;
-			}
+			Top = null;
 		}
+
 	}
 }

@@ -15,13 +15,15 @@ namespace Proyecto_ED1.Models.Data
         public E_Arboles.AVL<int, int> CUI;
         private readonly static Singleton _instance3 = new Singleton();
         public ELineales.Lista<Pacient>[] hashTable;
-
+        private readonly static Singleton _instance4 = new Singleton();
+        public E_Arboles.PriorityQueue<int, int> PQueue;
         private Singleton()
         {
             Nombre = new E_Arboles.AVL<string, int>();
             Apellido = new E_Arboles.AVL<string, int>();
             CUI = new E_Arboles.AVL<int, int>();
             hashTable = new ELineales.Lista<Pacient>[20];
+            PQueue = new E_Arboles.PriorityQueue<int, int>(20);
         }
 
         public static Singleton Instance
@@ -51,6 +53,14 @@ namespace Proyecto_ED1.Models.Data
             get
             {
                 return _instance3;
+            }
+        }
+
+        public static Singleton Instance4
+        {
+            get
+            {
+                return _instance4;
             }
         }
     }

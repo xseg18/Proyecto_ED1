@@ -26,5 +26,17 @@ namespace Proyecto_ED1.Models
         [Display(Name = "Prioridad")]
         [Required]
         public int Priority { get; set; }
+        [Display(Name = "Edad")]
+        [Required]
+        public string Age { get; set; }
+        [Display(Name = "Ocupación")]
+        [Required]
+        public string Occupation { get; set; }
+        [Display(Name = "Detalles")]
+        [Required]
+        public string Details { get; set; }
+        [Display(Name = "Enfermedades")]
+        [Required]
+        public string Diseases { get; set; }
     }
 }

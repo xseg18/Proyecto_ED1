@@ -1,5 +1,5 @@
-﻿var city = Object();
-
+﻿//-> Departamentos y municipios <-
+var city = Object();
 city['Alta Verapaz'] = '|Cobán|Santa Cruz Verapaz|San Cristobal Verapaz|Tactíc|Tamahú|San Miguel Tucurú|Panzos|Senahú|San Pedro Carchá|San Juan Chamelco|Lanquín|Santa María Cahabón|Chisec|Chahal|Fray Bartolomé de las Casas|Santa Catarina La Tinta';
 city['Baja Verapaz'] = '|Salamá|San Miguel Chicaj|Rabinal|Cubulco|Granados|Santa Cruz El Chol|San Jerónimo|Purulhá';
 city['Chimaltenango'] = '|Chimaltenango|San José Poaquil|San Martín Jilotepeque|San Juan Comalapa|Santa Apolonia|Tecpán Guatemala|Patzun|San Miguel Pochuta|Patzicia|Santa Cruz Balanyá|Acatenango|San Pedro Yepocapa|San Andrés Itzapa|Parramos|Zaragoza|El Tejar';
@@ -23,35 +23,83 @@ city['Suchitepéquez'] = '|Mazatenango|Cuyotenango|San Francisco Zapotitlán|San
 city['Totonicapán'] = '|Totonicapán|San Cristóbal Totonicapán|San Francisco El Alto|San Andrés Xecul|Momostenango|Santa María Chiquimula|Santa Lucía La Reforma|San Bartolo Aguas Calientes';
 city['Zacapa'] = '|Zacapa|Estanzuela|Río Hondo|Gualán|Teculután|Usumatlán|Cabañas|San Diego|La Unión|Huite';
 
+//-> Ocupaciones por edad <-
+var Occupation = Object();
+Occupation['18-39'] = '|Estudiante|Trabajador|Desempleado';
+Occupation['40-49'] = '|Trabajador|Desempleado';
+Occupation['50-69'] = '|Trabajador|Desempleado|Jubilado';
+Occupation['70 en adelante'] = '|Trabajador|Desempleado|Jubilado';
+
+//-> Detalles de ocupación <-
+var Work = Object();
+Work['Estudiante'] = '|Estudiante de medicina en 4to año (REALIZANDO PRÁCTICAS)|Otro'
+Work['Trabajador'] = '|Salud|Educación|Seguridad Nacional o servicios básicos|Judicial|Otros'
+Work['Desempleado'] = '|N/A';
+Work['Jubilado'] = '|Residencia en asilos|Otro';
 
 
+//Setter de departamento y municipios
 function setState() {
 	for (state in city)
 		document.write('<option value="' + state + '">' + state + '</option>');
 }
 
-function set_City(oRegionSel, oCountrySel) {
+function set_City(oStateSel, oCitySel) {
 	var countryArr;
-	oCountrySel.length = 0;
-	var region = oRegionSel.options[oRegionSel.selectedIndex].text;
-	if (city[region]) {
-		oCountrySel.disabled = false;
-		oCountrySel.options[0] = new Option('Seleccione su municipio', '');
-		countryArr = city[region].split('|');
+	oCitySel.length = 0;
+	var state = oStateSel.options[oStateSel.selectedIndex].text;
+	if (city[state]) {
+		oCitySel.disabled = false;
+		oCitySel.options[0] = new Option('Seleccione su municipio', '');
+		countryArr = city[state].split('|');
 		for (var i = 0; i < countryArr.length; i++)
-			oCountrySel.options[i + 1] = new Option(countryArr[i], countryArr[i]);
-		document.getElementById('txtregion').innerHTML = region;
-		document.getElementById('txtplacename').innerHTML = '';
+			oCitySel.options[i + 1] = new Option(countryArr[i], countryArr[i]);
 	}
-	else oCountrySel.disabled = true;
+	else oCitySel.disabled = true;
 }
-
-
 
 function print_city_state(oCountrySel, oCity_StateSel) {
 	var country = oCountrySel.options[oCountrySel.selectedIndex].text;
 	var city_state = oCity_StateSel.options[oCity_StateSel.selectedIndex].text;
-	if (city_state && city_states[country].indexOf(city_state) != -1)
-		document.getElementById('txtplacename').innerHTML = city_state + ', ' + country;
+	if (city_state && city[country].indexOf(city_state) != -1)
+		document.getElementById('txtplacename').innerHTML = city_state,
+		document.getElementById('txtregion').innerHTML = country;
 	else document.getElementById('txtplacename').innerHTML = country;
+}
+///////////////////////////////////////////////////////////////////////////////////////////
+
+//setter de edad, ocupación y detalles
+function SetAge() {
+	for (age in Occupation)
+		document.write('<option value="' + age + '">' + age + '</option>');
+}
+
+function SetOccupation(oAgeSel, oOccupationSel, oWorkSel) {
+	var occupationarr;
+	oOccupationSel.length = 0;
+	oWorkSel.length = 0;
+	var age = oAgeSel.options[oAgeSel.selectedIndex].text;
+	if (Occupation[age]) {
+		oOccupationSel.disabled = false;
+		oWorkSel.disabled = true;
+		oOccupationSel.options[0] = new Option('Seleccione su ocupación actual', '');
+		occupationarr = Occupation[age].split('|');
+		for (var i = 0; i < occupationarr.length; i++)
+			oOccupationSel.options[i + 1] = new Option(occupationarr[i], occupationarr[i]);
+	}
+	else oOccupationSel.disabled = true;
+}
+
+function SetWork(oOccupationSel, oWorkSel) {
+	var workarr;
+	oWorkSel.length = 0;
+	var occupation = oOccupationSel.options[oOccupationSel.selectedIndex].text;
+	if (Work[occupation]) {
+		oWorkSel.disabled = false;
+		oWorkSel.options[0] = new Option('Detalles', '');
+		workarr = Work[occupation].split('|');
+		for (var i = 0; i < workarr.length; i++)
+			oWorkSel.options[i + 1] = new Option(workarr[i], workarr[i]);
+	}
+	else oWorkSel.disabled = true;
 }
