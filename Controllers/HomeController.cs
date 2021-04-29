@@ -115,14 +115,19 @@ namespace Proyecto_ED1.Controllers
                 Singleton.Instance.Nombre.Add(newPacient.Name, pos);
                 Singleton.Instance1.Apellido.Add(newPacient.LName, pos);
                 Singleton.Instance2.CUI.Add(newPacient.CUI, pos);
+                if (Singleton.Instance3.hashTable[pos] == null)
+                {
+                    Singleton.Instance3.hashTable[pos] = new ELineales.Lista<Pacient>();
+                }
                 Singleton.Instance3.hashTable[pos].Add(newPacient);
                 Singleton.Instance4.PQueue.Add(newPacient.Priority, pos);
+                ViewData["Success"] = "Tarea agregada existosamente.";
                 return View();
             }
             catch
             {
                 ViewData["Error"] = "LLene todos los datos solicitados, porfavor";
-                return View(Error());
+                return View();
             }
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -130,7 +135,112 @@ namespace Proyecto_ED1.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        public IActionResult AllPacients()
+        {
+            ELineales.Lista<Pacient> list = new ELineales.Lista<Pacient>();
+            for (int i = 0; i < Singleton.Instance3.hashTable.Length; i++)
+            {
+                if(Singleton.Instance3.hashTable[i] != null)
+                {
+                    for (int j = 0; j < Singleton.Instance3.hashTable[i].Count(); j++)
+                    {
+                        list.Add(Singleton.Instance3.hashTable[i][j]);
+                    }
+                }
+            }
+            return View(list);
+        }
 
+        public IActionResult SearchN()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SearchN(IFormCollection collection)
+        {
+            try
+            {
+                Singleton.Instance5.SearchList.Clear();
+                int hashpos = Singleton.Instance.Nombre.Find(collection["Name"]);
+                if(Singleton.Instance3.hashTable[hashpos] == null)
+                {
+                    ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
+                        "Por favor, regrese a la pestaña de Inscripción e intente de nuevo";
+                    return View();
+                }
+                else
+                {
+                    for (int j = 0; j < Singleton.Instance3.hashTable[hashpos].Count(); j++)
+                    {
+                        Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos][j]);
+                    }
+                }
+            }
+            catch
+            {
+                ViewData["Error"] = "Por favor,ingrese nuevamente los datos pedidos";
+            }
+            return View();
+        }
+
+        public IActionResult SearchLN(IFormCollection collection)
+        {
+            try
+            {
+                Singleton.Instance5.SearchList.Clear();
+                int hashpos = Singleton.Instance.Nombre.Find(collection["LName"]);
+                if (Singleton.Instance3.hashTable[hashpos] == null)
+                {
+                    ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
+                        "Por favor, regrese a la pestaña de Inscripción e intente de nuevo";
+                    return View();
+                }
+                else
+                {
+                    for (int j = 0; j < Singleton.Instance3.hashTable[hashpos].Count(); j++)
+                    {
+                        Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos][j]);
+                    }
+                }
+            }
+            catch
+            {
+                ViewData["Error"] = "Por favor, ingrese nuevamente los datos pedidos";
+            }
+            return View();
+        }
+
+        public IActionResult SearchC(IFormCollection collection)
+        {
+            try
+            {
+                Singleton.Instance5.SearchList.Clear();
+                int hashpos = Singleton.Instance.Nombre.Find(collection["CUI"]);
+                if (Singleton.Instance3.hashTable[hashpos] == null)
+                {
+                    ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
+                        "Por favor, regrese a la pestaña de Inscripción e intente de nuevo";
+                    return View();
+                }
+                else
+                {
+                    for (int j = 0; j < Singleton.Instance3.hashTable[hashpos].Count(); j++)
+                    {
+                        Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos][j]);
+                    }
+                }
+            }
+            catch
+            {
+                ViewData["Error"] = "Por favor,ingrese nuevamente los datos pedidos";
+            }
+            return View();
+        }
+        public IActionResult Search()
+        {
+            return View(Singleton.Instance5.SearchList);
+        }
         public int getHashcode(string key)
         {
             byte[] code = Encoding.ASCII.GetBytes(key);

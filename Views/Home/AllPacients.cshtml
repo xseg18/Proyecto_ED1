@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Proyecto_ED1.Models.Pacient>
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Base de Datos</h1>
+
+<p>
+    <a asp-action="Inscription">Agregar nuevo</a>
+</p>
+
+<p>
+    Buscar por: <a asp-action="SearchN">Nombre</a> | <a asp-action="SearchC">Apellido</a> | <a asp-action="SearchP">CUI</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Priority)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CUI)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Departamento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Municipio)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Priority)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CUI)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Departamento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Municipio)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

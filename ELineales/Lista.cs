@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ELineales
 {
-	public class Lista<T> : IEnumerable<T>
+	public class Lista<T> : IEnumerable<T> 
 	{
 		private class Node
 		{
@@ -165,6 +165,5 @@ namespace ELineales
 		{
 			Top = null;
 		}
-
 	}
 }

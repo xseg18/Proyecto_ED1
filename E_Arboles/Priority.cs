@@ -31,9 +31,13 @@ namespace E_Arboles
             }
         }
 
+        public int Length
+        {
+            get => Queue.Length;
+        }
         Node root;
-        Y[] Queue;
-        int pos = 1;
+        static Y[] Queue;
+        static int pos = 1;
         public PriorityQueue(int x)
         {
             Queue = new Y[x];

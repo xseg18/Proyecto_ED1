@@ -4,12 +4,13 @@
 }
 
 <script type="text/javascript" src ="~/js/State_City.js"></script>
-    <div class="text-center">
+<div class="text-center">
     <h3 class="display-4">Inscripción de Pacientes</h3>
     <hr />
-    <p class ="text-center"> A continuación encontrará un formulario para ingresar la información requerida del paciente.</p>
-    </div>
+    <p class="text-center"> A continuación encontrará un formulario para ingresar la información requerida del paciente.</p>
+    <p style="font-size:larger; color:yellowgreen">@ViewData["Success"]</p>
     <p style="font-size:larger; color:red">@ViewData["Error"]</p>
+</div>
     <div class="col">
         <div class="row">
             <div class="col-md-6">
@@ -47,7 +48,7 @@
                         <span asp-validation-for="Municipio" class="text-danger"></span>
                     <div class="form-group">
                         <label asp-for="Age" class="control-label"></label>
-                        <select asp-for="Age" class="form-select" onchange="SetOccupation(this, occupation, work)" name="age">
+                        <select asp-for="Age" class="form-select" onchange="SetOccupation(this, occupation, details)" name="age">
                             <option value="" selected="selected">Seleccione su rango de edad</option>
                             <option value=""></option>
                             <script type="text/javascript">
@@ -58,12 +59,12 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Occupation" class="control-label"></label>
-                        <select asp-for="Occupation" class="form-select" name="occupation" disabled="disabled" onchange="SetWork(this, work)"></select>
+                        <select asp-for="Occupation" class="form-select" name="occupation" disabled="disabled" onchange="SetWork(this, details)"></select>
                         <span asp-validation-for="Occupation" class="text-danger"></span>
                     </div>
                         <div class="form-group">
                         <label asp-for="Details" class="control-label"></label>
-                        <select asp-for="Details"class="form-select" name="work" disabled="disabled"></select>
+                        <select asp-for="Details"class="form-select" name="details" disabled="disabled"></select>
                         <span asp-validation-for="Details" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -83,5 +84,5 @@
         </div>
     </div>
     <div class="col">
-        <input type="submit" value="Ir a lista de pacientes" class="btn btn-primary float-right" />
+        <a asp-action="AllPacients">Ir a la lista de pacientes</a>  
     </div>
