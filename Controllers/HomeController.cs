@@ -23,7 +23,8 @@ namespace Proyecto_ED1.Controllers
         {
             _logger = logger;
         }
-
+        public static string SN;
+        public static string LN;
         public IActionResult Index()
         {
             return View();
@@ -162,8 +163,8 @@ namespace Proyecto_ED1.Controllers
             try
             {
                 Singleton.Instance5.SearchList.Clear();
-                int hashpos = Singleton.Instance.Nombre.Find(collection["Name"]);
-                if(Singleton.Instance3.hashTable[hashpos] == null)
+                ELineales.Lista<int> hashpos = Singleton.Instance1.Apellido.FindAll(collection["Name"]);
+                if (hashpos == null)
                 {
                     ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
                         "Por favor, regrese a la pestaña de Inscripción e intente de nuevo";
@@ -171,11 +172,25 @@ namespace Proyecto_ED1.Controllers
                 }
                 else
                 {
-                    for (int j = 0; j < Singleton.Instance3.hashTable[hashpos].Count(); j++)
+                    for (int i = 0; i < hashpos.Count(); i++)
                     {
-                        Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos][j]);
+                        if (Singleton.Instance3.hashTable[hashpos[i]].Count() == 1)
+                        {
+                            Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos[i]][0]);
+                        }
+                        else
+                        {
+                            for (int j = 1; j < Singleton.Instance3.hashTable[hashpos[i]].Count(); j++)
+                            {
+                                if (Singleton.Instance3.hashTable[hashpos[i]][j].Name == collection["Name"])
+                                {
+                                    Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos[i]][j]);
+                                }
+                            }
+                        }
                     }
                 }
+                //mensaje de éxito y retornar vista
             }
             catch
             {
@@ -189,8 +204,8 @@ namespace Proyecto_ED1.Controllers
             try
             {
                 Singleton.Instance5.SearchList.Clear();
-                int hashpos = Singleton.Instance.Nombre.Find(collection["LName"]);
-                if (Singleton.Instance3.hashTable[hashpos] == null)
+                ELineales.Lista<int> hashpos = Singleton.Instance1.Apellido.FindAll(collection["LName"]);
+                if (hashpos == null)
                 {
                     ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
                         "Por favor, regrese a la pestaña de Inscripción e intente de nuevo";
@@ -198,11 +213,25 @@ namespace Proyecto_ED1.Controllers
                 }
                 else
                 {
-                    for (int j = 0; j < Singleton.Instance3.hashTable[hashpos].Count(); j++)
+                    for (int i = 0; i < hashpos.Count(); i++)
                     {
-                        Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos][j]);
+                        if(Singleton.Instance3.hashTable[hashpos[i]].Count() == 1)
+                        {
+                            Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos[i]][0]);
+                        }
+                        else
+                        {
+                            for (int j = 1; j < Singleton.Instance3.hashTable[hashpos[i]].Count(); j++)
+                            {
+                                if(Singleton.Instance3.hashTable[hashpos[i]][j].LName == collection["LName"])
+                                {
+                                    Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos[i]][j]);
+                                }
+                            }
+                        }
                     }
                 }
+                //mensaje de éxito y retornar vista
             }
             catch
             {
@@ -216,7 +245,7 @@ namespace Proyecto_ED1.Controllers
             try
             {
                 Singleton.Instance5.SearchList.Clear();
-                int hashpos = Singleton.Instance.Nombre.Find(collection["CUI"]);
+                int hashpos = Singleton.Instance2.CUI.Find(Convert.ToInt32(collection["CUI"]));
                 if (Singleton.Instance3.hashTable[hashpos] == null)
                 {
                     ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
@@ -227,7 +256,10 @@ namespace Proyecto_ED1.Controllers
                 {
                     for (int j = 0; j < Singleton.Instance3.hashTable[hashpos].Count(); j++)
                     {
-                        Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos][j]);
+                        if(Singleton.Instance3.hashTable[hashpos][j].CUI == collection["CUI"])
+                        {
+                            Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos][j]);
+                        }
                     }
                 }
             }
@@ -251,6 +283,22 @@ namespace Proyecto_ED1.Controllers
             }
             hash = (hash * code.Count()) % 20;
             return hash;
+        }
+        
+        public void SearcherN(Pacient p, string search)
+        {
+            if (p.Name == search)
+            {
+                Singleton.Instance5.SearchList.Add(p);
+            }
+        }
+
+        public void SearcherLN(Pacient p)
+        {
+            if (p.LName == search)
+            {
+                hashpos.Add();
+            }
         }
     }
 }

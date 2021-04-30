@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
+
 namespace E_Arboles
 {
     public class AVL<T, Y> where T : IComparable
@@ -222,7 +223,7 @@ namespace E_Arboles
         {
             return PreOrder(Root);
         }
-
+        
         private string PreOrder(Node head)
         {
             if (head == null)
@@ -267,6 +268,31 @@ namespace E_Arboles
             PostOrder(head.Right);
             Order += head.Key.ToString() + " =>";
             return Order;
+        }
+
+       
+        public ELineales.Lista<Y> FindAll(T search){
+
+            return FindAll(Root, search);
+        }
+
+        private ELineales.Lista<Y> FindAll(Node head, T key)
+        {
+            ELineales.Lista<Y> found = new ELineales.Lista<Y>();
+            if (head == null)
+            {
+                return null;
+            }
+            else if (key.CompareTo(head.Key) < 0)
+            {
+                return FindAll(head.Left, key);
+            }
+            else if (key.CompareTo(head.Key) > 0)
+            {
+                return FindAll(head.Right, key);
+            }
+            found.Add(head.Data);
+            return found;
         }
     }
 }
