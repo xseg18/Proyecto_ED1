@@ -114,14 +114,14 @@ namespace Proyecto_ED1.Controllers
             skip:
                 int pos = getHashcode(Convert.ToString(newPacient.CUI));
                 Singleton.Instance.Nombre.Add(newPacient.Name, pos);
-                Singleton.Instance1.Apellido.Add(newPacient.LName, pos);
-                Singleton.Instance2.CUI.Add(newPacient.CUI, pos);
-                if (Singleton.Instance3.hashTable[pos] == null)
+                Singleton.Instance.Apellido.Add(newPacient.LName, pos);
+                Singleton.Instance.CUI.Add(newPacient.CUI, pos);
+                if (Singleton.Instance.hashTable[pos] == null)
                 {
-                    Singleton.Instance3.hashTable[pos] = new ELineales.Lista<Pacient>();
+                    Singleton.Instance.hashTable[pos] = new ELineales.Lista<Pacient>();
                 }
-                Singleton.Instance3.hashTable[pos].Add(newPacient);
-                Singleton.Instance4.PQueue.Add(newPacient.Priority, pos);
+                Singleton.Instance.hashTable[pos].Add(newPacient);
+                Singleton.Instance.PQueue.Add(newPacient.Priority, pos);
                 ViewData["Success"] = "Tarea agregada existosamente.";
                 return View();
             }
@@ -139,13 +139,13 @@ namespace Proyecto_ED1.Controllers
         public IActionResult AllPacients()
         {
             ELineales.Lista<Pacient> list = new ELineales.Lista<Pacient>();
-            for (int i = 0; i < Singleton.Instance3.hashTable.Length; i++)
+            for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
             {
-                if(Singleton.Instance3.hashTable[i] != null)
+                if(Singleton.Instance.hashTable[i] != null)
                 {
-                    for (int j = 0; j < Singleton.Instance3.hashTable[i].Count(); j++)
+                    for (int j = 0; j < Singleton.Instance.hashTable[i].Count(); j++)
                     {
-                        list.Add(Singleton.Instance3.hashTable[i][j]);
+                        list.Add(Singleton.Instance.hashTable[i][j]);
                     }
                 }
             }
@@ -162,8 +162,8 @@ namespace Proyecto_ED1.Controllers
         {
             try
             {
-                Singleton.Instance5.SearchList.Clear();
-                ELineales.Lista<int> hashpos = Singleton.Instance1.Apellido.FindAll(collection["Name"]);
+                Singleton.Instance.SearchList.Clear();
+                ELineales.Lista<int> hashpos = Singleton.Instance.Apellido.FindAll(collection["Name"]);
                 if (hashpos == null)
                 {
                     ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
@@ -174,17 +174,17 @@ namespace Proyecto_ED1.Controllers
                 {
                     for (int i = 0; i < hashpos.Count(); i++)
                     {
-                        if (Singleton.Instance3.hashTable[hashpos[i]].Count() == 1)
+                        if (Singleton.Instance.hashTable[hashpos[i]].Count() == 1)
                         {
-                            Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos[i]][0]);
+                            Singleton.Instance.SearchList.Add(Singleton.Instance.hashTable[hashpos[i]][0]);
                         }
                         else
                         {
-                            for (int j = 1; j < Singleton.Instance3.hashTable[hashpos[i]].Count(); j++)
+                            for (int j = 1; j < Singleton.Instance.hashTable[hashpos[i]].Count(); j++)
                             {
-                                if (Singleton.Instance3.hashTable[hashpos[i]][j].Name == collection["Name"])
+                                if (Singleton.Instance.hashTable[hashpos[i]][j].Name == collection["Name"])
                                 {
-                                    Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos[i]][j]);
+                                    Singleton.Instance.SearchList.Add(Singleton.Instance.hashTable[hashpos[i]][j]);
                                 }
                             }
                         }
@@ -203,8 +203,8 @@ namespace Proyecto_ED1.Controllers
         {
             try
             {
-                Singleton.Instance5.SearchList.Clear();
-                ELineales.Lista<int> hashpos = Singleton.Instance1.Apellido.FindAll(collection["LName"]);
+                Singleton.Instance.SearchList.Clear();
+                ELineales.Lista<int> hashpos = Singleton.Instance.Apellido.FindAll(collection["LName"]);
                 if (hashpos == null)
                 {
                     ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
@@ -215,17 +215,17 @@ namespace Proyecto_ED1.Controllers
                 {
                     for (int i = 0; i < hashpos.Count(); i++)
                     {
-                        if(Singleton.Instance3.hashTable[hashpos[i]].Count() == 1)
+                        if(Singleton.Instance.hashTable[hashpos[i]].Count() == 1)
                         {
-                            Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos[i]][0]);
+                            Singleton.Instance.SearchList.Add(Singleton.Instance.hashTable[hashpos[i]][0]);
                         }
                         else
                         {
-                            for (int j = 1; j < Singleton.Instance3.hashTable[hashpos[i]].Count(); j++)
+                            for (int j = 1; j < Singleton.Instance.hashTable[hashpos[i]].Count(); j++)
                             {
-                                if(Singleton.Instance3.hashTable[hashpos[i]][j].LName == collection["LName"])
+                                if(Singleton.Instance.hashTable[hashpos[i]][j].LName == collection["LName"])
                                 {
-                                    Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos[i]][j]);
+                                    Singleton.Instance.SearchList.Add(Singleton.Instance.hashTable[hashpos[i]][j]);
                                 }
                             }
                         }
@@ -244,9 +244,9 @@ namespace Proyecto_ED1.Controllers
         {
             try
             {
-                Singleton.Instance5.SearchList.Clear();
-                int hashpos = Singleton.Instance2.CUI.Find(Convert.ToInt32(collection["CUI"]));
-                if (Singleton.Instance3.hashTable[hashpos] == null)
+                Singleton.Instance.SearchList.Clear();
+                int hashpos = Singleton.Instance.CUI.Find(Convert.ToInt32(collection["CUI"]));
+                if (Singleton.Instance.hashTable[hashpos] == null)
                 {
                     ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
                         "Por favor, regrese a la pestaña de Inscripción e intente de nuevo";
@@ -254,11 +254,11 @@ namespace Proyecto_ED1.Controllers
                 }
                 else
                 {
-                    for (int j = 0; j < Singleton.Instance3.hashTable[hashpos].Count(); j++)
+                    for (int j = 0; j < Singleton.Instance.hashTable[hashpos].Count(); j++)
                     {
-                        if(Singleton.Instance3.hashTable[hashpos][j].CUI == collection["CUI"])
+                        if(Singleton.Instance.hashTable[hashpos][j].CUI == collection["CUI"])
                         {
-                            Singleton.Instance5.SearchList.Add(Singleton.Instance3.hashTable[hashpos][j]);
+                            Singleton.Instance.SearchList.Add(Singleton.Instance.hashTable[hashpos][j]);
                         }
                     }
                 }
@@ -271,7 +271,7 @@ namespace Proyecto_ED1.Controllers
         }
         public IActionResult Search()
         {
-            return View(Singleton.Instance5.SearchList);
+            return View(Singleton.Instance.SearchList);
         }
         public int getHashcode(string key)
         {
@@ -289,16 +289,16 @@ namespace Proyecto_ED1.Controllers
         {
             if (p.Name == search)
             {
-                Singleton.Instance5.SearchList.Add(p);
+                Singleton.Instance.SearchList.Add(p);
             }
         }
 
-        public void SearcherLN(Pacient p)
-        {
-            if (p.LName == search)
-            {
-                hashpos.Add();
-            }
-        }
+        //public void SearcherLN(Pacient p)
+        //{
+        //    if (p.LName == search)
+        //    {
+        //        hashpos.Add();
+        //    }
+        //}
     }
 }
