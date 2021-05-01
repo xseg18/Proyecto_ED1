@@ -14,9 +14,9 @@ namespace Proyecto_ED1.Models
         [Display(Name = "Apellido")]
         [Required]
         public string LName { get; set; }
-        [Display(Name = "DPI/Partida de Nacimiento")]
+        [Display(Name = "Número de DPI/Partida de Nacimiento")]
         [Required]
-        public int CUI { get; set; }
+        public long CUI { get; set; }
         [Display(Name = "Departamento")]
         [Required]
         public string Departamento { get; set; }

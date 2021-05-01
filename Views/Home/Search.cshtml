@@ -4,14 +4,14 @@
     ViewData["Title"] = "AllPacients";
 }
 
-<h1>Base de Datos</h1>
+<h1>Resultados de la búsqueda</h1>
 
 <p>
     <a asp-action="Inscription">Agregar nuevo</a>
 </p>
 
 <p>
-    Buscar por: <a asp-action="SearchN">Nombre</a> | <a asp-action="SearchC">Apellido</a> | <a asp-action="SearchP">CUI</a>
+    <a asp-action="AllPacients">Regresar a la lista</a>
 </p>
 <table class="table">
     <thead>
@@ -39,26 +39,30 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CUI)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Departamento)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Municipio)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Priority)
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CUI)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Departamento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Municipio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new { id = item.CUI }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.CUI })
+            </td>
+        </tr>
         }
     </tbody>
 </table>
