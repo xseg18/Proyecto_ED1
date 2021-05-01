@@ -1,33 +1,84 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Proyecto_ED1.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Text;
-using Proyecto_ED1.Models.Data;
+﻿using System;
 using System.IO;
 using System.Data;
+using System.Text;
+using System.Linq;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.VisualBasic.FileIO;
+using Microsoft.Extensions.Logging;
+using Proyecto_ED1.Models;
+using Proyecto_ED1.Models.Data;
 
 namespace Proyecto_ED1.Controllers
 {
     public class HomeController : Controller
     {
+        public static string SN, LN;
+        public static bool start = false;
+        
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
-        public static string SN;
-        public static string LN;
+
         public IActionResult Index()
         {
-            return View();
+            try
+            {
+                if (!start)
+                {
+                    start = true;
+                    using (TextFieldParser txtParser = new TextFieldParser("Storage_File.txt"))
+                    {
+                        txtParser.CommentTokens = new string[] { "#" };
+                        txtParser.SetDelimiters(new string[] { ";" });
+                        txtParser.HasFieldsEnclosedInQuotes = true;
+
+                        while (!txtParser.EndOfData)
+                        {
+                            string[] fields = txtParser.ReadFields();
+
+                            var newPacient = new Pacient
+                            {
+                                Name = fields[0],
+                                LName = fields[1],
+                                CUI = Convert.ToInt32(fields[2]),
+                                Departamento = fields[3],
+                                Municipio = fields[4],
+                                Priority = Convert.ToInt32(fields[5]),
+                                Age = fields[6],
+                                Occupation = fields[7],
+                                Details = fields[8],
+                                Diseases = fields[9]
+                            };
+
+                            if (Singleton.Instance.hashTable[getHashcode(fields[2])] == null)
+                            {
+                                Singleton.Instance.hashTable[getHashcode(fields[2])] = new ELineales.Lista<Pacient>();
+                            }
+
+                            Singleton.Instance.hashTable[getHashcode(fields[2])].Add(newPacient);
+                            Singleton.Instance.Nombre.Add(fields[0], getHashcode(fields[2]));
+                            Singleton.Instance.Apellido.Add(fields[1], getHashcode(fields[2]));
+                            Singleton.Instance.CUI.Add(Convert.ToInt32(fields[2]), getHashcode(fields[2]));
+                            Singleton.Instance.PQueue.Add(Convert.ToInt32(fields[5]), getHashcode(fields[2]));
+                        }
+                    }
+                }
+                return View();
+            }
+            catch
+            {
+                using (new FileStream("Storage_File.txt", FileMode.CreateNew)) { }
+                return View();
+            }
         }
 
         public IActionResult Privacy()
@@ -113,21 +164,25 @@ namespace Proyecto_ED1.Controllers
                 }
             skip:
                 int pos = getHashcode(Convert.ToString(newPacient.CUI));
-                Singleton.Instance.Nombre.Add(newPacient.Name, pos);
-                Singleton.Instance.Apellido.Add(newPacient.LName, pos);
-                Singleton.Instance.CUI.Add(newPacient.CUI, pos);
+
                 if (Singleton.Instance.hashTable[pos] == null)
                 {
                     Singleton.Instance.hashTable[pos] = new ELineales.Lista<Pacient>();
                 }
+
                 Singleton.Instance.hashTable[pos].Add(newPacient);
+                Singleton.Instance.Nombre.Add(newPacient.Name, pos);
+                Singleton.Instance.Apellido.Add(newPacient.LName, pos);
+                Singleton.Instance.CUI.Add(newPacient.CUI, pos);
                 Singleton.Instance.PQueue.Add(newPacient.Priority, pos);
-                ViewData["Success"] = "Tarea agregada existosamente.";
+
+                ViewData["Success"] = "Paciente agregado correctamente.";
+                updateFile();
                 return View();
             }
             catch
             {
-                ViewData["Error"] = "LLene todos los datos solicitados, porfavor";
+                ViewData["Error"] = "Por favor, llene todos los campos solicitados.";
                 return View();
             }
         }
@@ -143,9 +198,9 @@ namespace Proyecto_ED1.Controllers
             {
                 if(Singleton.Instance.hashTable[i] != null)
                 {
-                    for (int j = 0; j < Singleton.Instance.hashTable[i].Count(); j++)
+                    foreach (var item in Singleton.Instance.hashTable[i])
                     {
-                        list.Add(Singleton.Instance.hashTable[i][j]);
+                        list.Add(item);
                     }
                 }
             }
@@ -194,7 +249,7 @@ namespace Proyecto_ED1.Controllers
             }
             catch
             {
-                ViewData["Error"] = "Por favor,ingrese nuevamente los datos pedidos";
+                ViewData["Error"] = "Por favor, llene todos los campos solicitados.";
             }
             return View();
         }
@@ -235,7 +290,7 @@ namespace Proyecto_ED1.Controllers
             }
             catch
             {
-                ViewData["Error"] = "Por favor, ingrese nuevamente los datos pedidos";
+                ViewData["Error"] = "Por favor, llene todos los campos solicitados.";
             }
             return View();
         }
@@ -265,14 +320,16 @@ namespace Proyecto_ED1.Controllers
             }
             catch
             {
-                ViewData["Error"] = "Por favor,ingrese nuevamente los datos pedidos";
+                ViewData["Error"] = "Por favor, llene todos los campos solicitados.";
             }
             return View();
         }
+
         public IActionResult Search()
         {
             return View(Singleton.Instance.SearchList);
         }
+
         public int getHashcode(string key)
         {
             byte[] code = Encoding.ASCII.GetBytes(key);
@@ -283,6 +340,23 @@ namespace Proyecto_ED1.Controllers
             }
             hash = (hash * code.Count()) % 20;
             return hash;
+        }
+
+        public void updateFile()
+        {
+            System.IO.File.WriteAllText("Storage_File.txt", String.Empty);
+            StreamWriter writer = new StreamWriter("Storage_File.txt", true);
+            for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
+            {
+                if (Singleton.Instance.hashTable[i] != null)
+                {
+                    foreach (var item in Singleton.Instance.hashTable[i])
+                    {
+                        writer.WriteLine(item.Name + ";" + item.LName + ";" + item.CUI + ";" + item.Departamento + ";" + item.Municipio + ";" + item.Priority + ";" + item.Age + ";" + item.Occupation + ";" + item.Details + ";" + item.Diseases);
+                    }
+                }
+            }
+            writer.Close();
         }
         
         public void SearcherN(Pacient p, string search)
