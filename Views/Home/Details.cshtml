@@ -1,0 +1,44 @@
+﻿@model Proyecto_ED1.Models.Pacient
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Detalles</h1>
+
+<h4>Paciente</h4>
+<hr />
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Departamento)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Municipio)
+        </dd>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CUI)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Age)
+        </dt>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Occupation)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Details)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Diseases)
+        </dt>
+    </dl>
+</div>
+<div>
+    <a asp-action="Search">Regresar a lista</a>
+</div>

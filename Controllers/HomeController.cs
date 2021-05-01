@@ -47,9 +47,9 @@ namespace Proyecto_ED1.Controllers
 
                             var newPacient = new Pacient
                             {
-                                Name = fields[0],
-                                LName = fields[1],
-                                CUI = Convert.ToInt32(fields[2]),
+                                Name = fields[0].ToUpper(),
+                                LName = fields[1].ToUpper(),
+                                CUI = Convert.ToInt64(fields[2]),
                                 Departamento = fields[3],
                                 Municipio = fields[4],
                                 Priority = Convert.ToInt32(fields[5]),
@@ -63,11 +63,10 @@ namespace Proyecto_ED1.Controllers
                             {
                                 Singleton.Instance.hashTable[getHashcode(fields[2])] = new ELineales.Lista<Pacient>();
                             }
-
                             Singleton.Instance.hashTable[getHashcode(fields[2])].Add(newPacient);
-                            Singleton.Instance.Nombre.Add(fields[0], getHashcode(fields[2]));
-                            Singleton.Instance.Apellido.Add(fields[1], getHashcode(fields[2]));
-                            Singleton.Instance.CUI.Add(Convert.ToInt32(fields[2]), getHashcode(fields[2]));
+                            Singleton.Instance.Nombre.Add(fields[0].ToUpper(), getHashcode(fields[2]));
+                            Singleton.Instance.Apellido.Add(fields[1].ToUpper(), getHashcode(fields[2]));
+                            Singleton.Instance.CUI.Add(Convert.ToInt64(fields[2]), getHashcode(fields[2]));
                         }
                     }
                 }
@@ -96,11 +95,11 @@ namespace Proyecto_ED1.Controllers
             {
                 var newPacient = new Models.Pacient
                 {
-                    Name = collection["Name"],
-                    LName = collection["LName"],
+                    Name = Convert.ToString(collection["Name"]).ToUpper(),
+                    LName = Convert.ToString(collection["LName"]).ToUpper(),
                     Departamento = collection["Departamento"],
                     Municipio = collection["Municipio"],
-                    CUI = Convert.ToInt32(collection["CUI"]),
+                    CUI = Convert.ToInt64(collection["CUI"]),
                     Age = collection["Age"],
                     Occupation = collection["Occupation"],
                     Details = collection["Details"],
@@ -217,7 +216,7 @@ namespace Proyecto_ED1.Controllers
             try
             {
                 Singleton.Instance.SearchList.Clear();
-                ELineales.Lista<int> hashpos = Singleton.Instance.Apellido.FindAll(collection["Name"]);
+                ELineales.Lista<int> hashpos = Singleton.Instance.Nombre.FindAll(Convert.ToString(collection["Name"]).ToUpper());
                 if (hashpos == null)
                 {
                     ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
@@ -240,7 +239,7 @@ namespace Proyecto_ED1.Controllers
                         {
                             foreach(var p in Singleton.Instance.hashTable[hashpos[i]])
                             {
-                                if(p.Name == collection["Name"])
+                                if(p.Name == Convert.ToString(collection["Name"]).ToUpper())
                                 {
                                     Singleton.Instance.SearchList.Add(p);
                                 }
@@ -253,16 +252,19 @@ namespace Proyecto_ED1.Controllers
             catch
             {
                 ViewData["Error"] = "Por favor, llene todos los campos solicitados.";
+                return View();
             }
+        }
+        public IActionResult SearchLN()
+        {
             return View();
         }
-
         public IActionResult SearchLN(IFormCollection collection)
         {
             try
             {
                 Singleton.Instance.SearchList.Clear();
-                ELineales.Lista<int> hashpos = Singleton.Instance.Apellido.FindAll(collection["LName"]);
+                ELineales.Lista<int> hashpos = Singleton.Instance.Apellido.FindAll(Convert.ToString(collection["LName"]).ToUpper());
                 if (hashpos == null)
                 {
                     ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
@@ -298,10 +300,13 @@ namespace Proyecto_ED1.Controllers
             catch
             {
                 ViewData["Error"] = "Por favor, llene todos los campos solicitados.";
+                return View();
             }
+        }
+        public IActionResult SearchC()
+        {
             return View();
         }
-
         public IActionResult SearchC(IFormCollection collection)
         {
             try
@@ -316,20 +321,21 @@ namespace Proyecto_ED1.Controllers
                 }
                 else
                 {
-                    for (int j = 0; j < Singleton.Instance.hashTable[hashpos].Count(); j++)
+                    foreach(Pacient p in Singleton.Instance.hashTable[hashpos])
                     {
-                        if(Singleton.Instance.hashTable[hashpos][j].CUI == collection["CUI"])
+                        if (p.CUI == collection["CUI"])
                         {
-                            Singleton.Instance.SearchList.Add(Singleton.Instance.hashTable[hashpos][j]);
+                            Singleton.Instance.SearchList.Add(p);
                         }
                     }
+                    return RedirectToAction(nameof(Search));
                 }
             }
             catch
             {
                 ViewData["Error"] = "Por favor, llene todos los campos solicitados.";
+                return View();
             }
-            return View();
         }
 
         public IActionResult Search()
@@ -337,6 +343,19 @@ namespace Proyecto_ED1.Controllers
             return View(Singleton.Instance.SearchList);
         }
 
+        public ActionResult Details(int id)
+        {
+            int pos = getHashcode(id.ToString());
+            Pacient pa = new Pacient();
+            foreach(var p in Singleton.Instance.hashTable[pos])
+            {
+                if(p.CUI == id)
+                {
+                    pa = p;
+                }
+            }
+            return View(pa);
+        }
         public int getHashcode(string key)
         {
             byte[] code = Encoding.ASCII.GetBytes(key);

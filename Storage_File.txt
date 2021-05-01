@@ -1,0 +1,3 @@
+JUAN;GONZÁLEZ;382565647102;Petén;La Libertad;7;40-49;Trabajador;Judicial;Ninguna de las anteriores
+XIMENA;ELIZARDI;3724646370101;Guatemala;Mixco;3;18-39;Estudiante;Otro;Enfermedades crónicas (Diabetes, asma, hipertensión, etc.)
+XIMENA;GOBERN;1234567890123;Petén;Melchor de Mencos;4;50-69;Trabajador;Seguridad Nacional o servicios básicos;Ninguna de las anteriores

@@ -14,11 +14,11 @@ namespace E_Arboles
             public Node Left;
             public Node Right;
             public T Key;
-            public Y Data;
+            public ELineales.Lista<Y> Data = new ELineales.Lista<Y>();
             public Node(T Key, Y Data)
             {
                 this.Key = Key;
-                this.Data = Data;
+                this.Data.Add(Data);
             }
         }
         Node Root;
@@ -53,6 +53,10 @@ namespace E_Arboles
             {
                 actual.Right = Add(actual.Right, item);
                 actual = Balance(actual);
+            }
+            else if(item.Key.CompareTo(actual.Key) == 0)
+            {
+                actual.Data.Add(item.Data[0]);
             }
             return actual;
         }
@@ -216,7 +220,7 @@ namespace E_Arboles
             {
                 return Find(head.Right, key);
             }
-            return head.Data;
+            return head.Data[0];
         }
 
         public string PreOrder()
@@ -278,7 +282,6 @@ namespace E_Arboles
 
         private ELineales.Lista<Y> FindAll(Node head, T key)
         {
-            ELineales.Lista<Y> found = new ELineales.Lista<Y>();
             if (head == null)
             {
                 return null;
@@ -291,8 +294,7 @@ namespace E_Arboles
             {
                 return FindAll(head.Right, key);
             }
-            found.Add(head.Data);
-            return found;
+            return head.Data;
         }
     }
 }
