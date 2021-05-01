@@ -68,7 +68,6 @@ namespace Proyecto_ED1.Controllers
                             Singleton.Instance.Nombre.Add(fields[0], getHashcode(fields[2]));
                             Singleton.Instance.Apellido.Add(fields[1], getHashcode(fields[2]));
                             Singleton.Instance.CUI.Add(Convert.ToInt32(fields[2]), getHashcode(fields[2]));
-                            Singleton.Instance.PQueue.Add(Convert.ToInt32(fields[5]), getHashcode(fields[2]));
                         }
                     }
                 }
@@ -229,23 +228,27 @@ namespace Proyecto_ED1.Controllers
                 {
                     for (int i = 0; i < hashpos.Count(); i++)
                     {
-                        if (Singleton.Instance.hashTable[hashpos[i]].Count() == 1)
+                        bool repeated = false;
+                        for (int j = 0; j < i; j++)
                         {
-                            Singleton.Instance.SearchList.Add(Singleton.Instance.hashTable[hashpos[i]][0]);
-                        }
-                        else
-                        {
-                            for (int j = 1; j < Singleton.Instance.hashTable[hashpos[i]].Count(); j++)
+                            if(hashpos[i] == hashpos[j])
                             {
-                                if (Singleton.Instance.hashTable[hashpos[i]][j].Name == collection["Name"])
+                                repeated = true;
+                            }
+                        }
+                        if (!repeated)
+                        {
+                            foreach(var p in Singleton.Instance.hashTable[hashpos[i]])
+                            {
+                                if(p.Name == collection["Name"])
                                 {
-                                    Singleton.Instance.SearchList.Add(Singleton.Instance.hashTable[hashpos[i]][j]);
+                                    Singleton.Instance.SearchList.Add(p);
                                 }
                             }
                         }
                     }
                 }
-                //mensaje de éxito y retornar vista
+                return RedirectToAction(nameof(Search));
             }
             catch
             {
@@ -270,23 +273,27 @@ namespace Proyecto_ED1.Controllers
                 {
                     for (int i = 0; i < hashpos.Count(); i++)
                     {
-                        if(Singleton.Instance.hashTable[hashpos[i]].Count() == 1)
+                        bool repeated = false;
+                        for (int j = 0; j < i; j++)
                         {
-                            Singleton.Instance.SearchList.Add(Singleton.Instance.hashTable[hashpos[i]][0]);
-                        }
-                        else
-                        {
-                            for (int j = 1; j < Singleton.Instance.hashTable[hashpos[i]].Count(); j++)
+                            if (hashpos[i] == hashpos[j])
                             {
-                                if(Singleton.Instance.hashTable[hashpos[i]][j].LName == collection["LName"])
+                                repeated = true;
+                            }
+                        }
+                        if (!repeated)
+                        {
+                            foreach (Pacient p in Singleton.Instance.hashTable[hashpos[i]])
+                            {
+                                if (p.Name == collection["LName"])
                                 {
-                                    Singleton.Instance.SearchList.Add(Singleton.Instance.hashTable[hashpos[i]][j]);
+                                    Singleton.Instance.SearchList.Add(p);
                                 }
                             }
                         }
                     }
                 }
-                //mensaje de éxito y retornar vista
+                return RedirectToAction(nameof(Search));
             }
             catch
             {
@@ -358,21 +365,5 @@ namespace Proyecto_ED1.Controllers
             }
             writer.Close();
         }
-        
-        public void SearcherN(Pacient p, string search)
-        {
-            if (p.Name == search)
-            {
-                Singleton.Instance.SearchList.Add(p);
-            }
-        }
-
-        //public void SearcherLN(Pacient p)
-        //{
-        //    if (p.LName == search)
-        //    {
-        //        hashpos.Add();
-        //    }
-        //}
     }
 }

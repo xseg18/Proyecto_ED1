@@ -147,6 +147,10 @@ namespace E_Arboles
                 root.Key = remp.Key;
                 root.Data = remp.Data;
                 Balance(root, null);
+                for (int i = 1; i < Queue.Length-1; i++)
+                {
+                    Queue[i] = Queue[i + 1];
+                } 
             }
             else
             {
