@@ -195,7 +195,7 @@ namespace Proyecto_ED1.Controllers
             ELineales.Lista<Pacient> list = new ELineales.Lista<Pacient>();
             for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
             {
-                if(Singleton.Instance.hashTable[i] != null)
+                if (Singleton.Instance.hashTable[i] != null)
                 {
                     foreach (var item in Singleton.Instance.hashTable[i])
                     {
