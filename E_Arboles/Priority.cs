@@ -136,7 +136,7 @@ namespace E_Arboles
         {
             Node safe = root;
             Node remp = FindLast();
-            if (safe != remp)
+            if (Queue[2] != null)
             {
                 root.Key = remp.Key;
                 root.Data = remp.Data;
