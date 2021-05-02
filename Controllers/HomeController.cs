@@ -324,7 +324,7 @@ namespace Proyecto_ED1.Controllers
                 if (Singleton.Instance.hashTable[hashpos] == null)
                 {
                     ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
-                        "Por favor, regrese a la pestaña de Inscripción e intente de nuevo";
+                        " Por favor, regrese a la pestaña de Inscripción e intente de nuevo";
                     return View();
                 }
                 else
