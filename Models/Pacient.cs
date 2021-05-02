@@ -38,6 +38,8 @@ namespace Proyecto_ED1.Models
         [Display(Name = "Enfermedades")]
         [Required]
         public string Diseases { get; set; }
+        [Display(Name = "Vacunado")]
+        [Required]
         public bool Vaccinated { get; set; }
     }
 }

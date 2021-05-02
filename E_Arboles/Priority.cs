@@ -9,9 +9,9 @@ namespace E_Arboles
     {
         public class Node
         {
-            public Node Right;
-            public Node Left;
-            public Node Parent;
+            internal Node Right;
+            internal Node Left;
+            internal Node Parent;
             T Keys;
             Y Datas;
             public Node(T k, Y d)
@@ -128,16 +128,19 @@ namespace E_Arboles
 
             }
         }
+
         void Swap(int pos1, int pos2)
         {
             Y safe = Queue[pos1];
             Queue[pos1] = Queue[pos2];
             Queue[pos2] = safe;
         }
-        public Y Peek()
+
+        public Node Peek()
         {
-            return root.Data;
+            return root;
         }
+
         public Y Pop()
         {
             Y safe = root.Data;
@@ -184,6 +187,7 @@ namespace E_Arboles
                 return root;
             }
         }
+
         Node Find(Y data, Node top)
         {
             if (top != null)
@@ -207,6 +211,19 @@ namespace E_Arboles
                 return null;
             }
         }
+
+        public void Clear()
+        {
+            root = null;
+
+            for (int i = 0; i < Queue.Length; i++)
+            {
+                Queue[i] = default(Y);
+            }
+
+            pos = 1;
+        }
+
         public Y[] ReturnQueue()
         {
             return Queue;

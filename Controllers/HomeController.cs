@@ -18,8 +18,9 @@ namespace Proyecto_ED1.Controllers
 {
     public class HomeController : Controller
     {
-        public static string SN, LN;
-        public static bool start = false;
+        public static string SN, LN, simDep, simMun;
+        public static int pacientPrio, pacientPos;
+        public static bool start = false, sim = false;
         
         private readonly ILogger<HomeController> _logger;
 
@@ -87,95 +88,102 @@ namespace Proyecto_ED1.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Inscription(IFormCollection collection)
         {
             try
             {
-                var newPacient = new Models.Pacient
+                if (Convert.ToString(collection["CUI"]).Length == 13)
                 {
-                    Name = Convert.ToString(collection["Name"]).ToUpper(),
-                    LName = Convert.ToString(collection["LName"]).ToUpper(),
-                    Departamento = collection["Departamento"],
-                    Municipio = collection["Municipio"],
-                    CUI = Convert.ToInt64(collection["CUI"]),
-                    Age = collection["Age"],
-                    Occupation = collection["Occupation"],
-                    Details = collection["Details"],
-                    Diseases = collection["Diseases"]
-                };
-                //definir prioridad
-                //prioridad 1: personal de salud y estudiantes de medicina
-                if(newPacient.Details == "Salud" || newPacient.Details == "Estudiante de medicina en 4to año (REALIZANDO PRÁCTICAS)")
-                {
-                    newPacient.Priority = 1;
-                    goto skip;
-                }
-                //prioridad 2: residentes de asilo
-                else if(newPacient.Details == "Residencia en asilo")
-                {
-                    newPacient.Priority = 2;
-                    goto skip;
-                } 
-                //prioridad 3: viejitos > 70 y adultos con enfermedades
-                else if(newPacient.Age == "70 en adelante" || newPacient.Diseases != "Ninguna de las anteriores")
-                {
-                    newPacient.Priority = 3;
-                    goto skip;
-                }
-                //prioridad 4: adultos de 50-69
-                else if(newPacient.Age == "50-69")
-                {
-                    newPacient.Priority = 4;
-                    goto skip;
-                }
-                //prioridad 5: seguridad y servicios básicos
-                else if(newPacient.Details == "Seguridad Nacional o servicios básicos")
-                {
-                    newPacient.Priority = 5;
-                    goto skip;
-                }
-                //prioridad 6: Eduacación
-                else if (newPacient.Details == "Educación")
-                {
-                    newPacient.Priority = 6;
-                    goto skip;
-                }
-                //prioridad 7: Judicial
-                else if (newPacient.Details == "Judicial")
-                {
-                    newPacient.Priority = 7;
-                    goto skip;
-                }
-                //prioridad 8: adultos de edad media
-                else if (newPacient.Age == "40-49")
-                {
-                    newPacient.Priority = 8;
-                    goto skip;
-                }
-                //Prioridad 9: chavo rukos
-                else if (newPacient.Age == "18-39")
-                {
-                    newPacient.Priority = 9;
-                    goto skip;
-                }
-            skip:
-                int pos = getHashcode(Convert.ToString(newPacient.CUI));
+                    var newPacient = new Pacient
+                    {
+                        Name = Convert.ToString(collection["Name"]).ToUpper(),
+                        LName = Convert.ToString(collection["LName"]).ToUpper(),
+                        CUI = Convert.ToInt64(collection["CUI"]),
+                        Departamento = collection["Departamento"],
+                        Municipio = collection["Municipio"],
+                        Age = collection["Age"],
+                        Occupation = collection["Occupation"],
+                        Details = collection["Details"],
+                        Diseases = collection["Diseases"],
+                        Vaccinated = false
+                    };
+                    //definir prioridad
+                    //prioridad 1: personal de salud y estudiantes de medicina
+                    if (newPacient.Details == "Salud" || newPacient.Details == "Estudiante de medicina en 4to año (REALIZANDO PRÁCTICAS)")
+                    {
+                        newPacient.Priority = 1;
+                        goto skip;
+                    }
+                    //prioridad 2: residentes de asilo
+                    else if (newPacient.Details == "Residencia en asilo")
+                    {
+                        newPacient.Priority = 2;
+                        goto skip;
+                    }
+                    //prioridad 3: viejitos > 70 y adultos con enfermedades
+                    else if (newPacient.Age == "70 en adelante" || newPacient.Diseases != "Ninguna de las anteriores")
+                    {
+                        newPacient.Priority = 3;
+                        goto skip;
+                    }
+                    //prioridad 4: adultos de 50-69
+                    else if (newPacient.Age == "50-69")
+                    {
+                        newPacient.Priority = 4;
+                        goto skip;
+                    }
+                    //prioridad 5: seguridad y servicios básicos
+                    else if (newPacient.Details == "Seguridad Nacional o servicios básicos")
+                    {
+                        newPacient.Priority = 5;
+                        goto skip;
+                    }
+                    //prioridad 6: Eduacación
+                    else if (newPacient.Details == "Educación")
+                    {
+                        newPacient.Priority = 6;
+                        goto skip;
+                    }
+                    //prioridad 7: Judicial
+                    else if (newPacient.Details == "Judicial")
+                    {
+                        newPacient.Priority = 7;
+                        goto skip;
+                    }
+                    //prioridad 8: adultos de edad media
+                    else if (newPacient.Age == "40-49")
+                    {
+                        newPacient.Priority = 8;
+                        goto skip;
+                    }
+                    //Prioridad 9: chavo rukos
+                    else if (newPacient.Age == "18-39")
+                    {
+                        newPacient.Priority = 9;
+                        goto skip;
+                    }
+                skip:
+                    int pos = getHashcode(Convert.ToString(newPacient.CUI));
 
-                if (Singleton.Instance.hashTable[pos] == null)
-                {
-                    Singleton.Instance.hashTable[pos] = new ELineales.Lista<Pacient>();
+                    if (Singleton.Instance.hashTable[pos] == null)
+                    {
+                        Singleton.Instance.hashTable[pos] = new ELineales.Lista<Pacient>();
+                    }
+
+                    Singleton.Instance.hashTable[pos].Add(newPacient);
+                    Singleton.Instance.Nombre.Add(newPacient.Name, pos);
+                    Singleton.Instance.Apellido.Add(newPacient.LName, pos);
+                    Singleton.Instance.CUI.Add(newPacient.CUI, pos);
+                    Singleton.Instance.PQueue.Add(newPacient.Priority, pos);
+
+                    ViewData["Success"] = "Paciente agregado correctamente.";
+                    updateFile();
+                    return View();
                 }
-
-                Singleton.Instance.hashTable[pos].Add(newPacient);
-                Singleton.Instance.Nombre.Add(newPacient.Name, pos);
-                Singleton.Instance.Apellido.Add(newPacient.LName, pos);
-                Singleton.Instance.CUI.Add(newPacient.CUI, pos);
-                Singleton.Instance.PQueue.Add(newPacient.Priority, pos);
-
-                ViewData["Success"] = "Paciente agregado correctamente.";
-                updateFile();
+                ViewData["Error"] = "Por favor, ingrese un documento de identificación válido.";
                 return View();
             }
             catch
@@ -343,7 +351,7 @@ namespace Proyecto_ED1.Controllers
             return View(Singleton.Instance.SearchList);
         }
 
-        public ActionResult Details(int id)
+        public IActionResult Details(int id)
         {
             int pos = getHashcode(id.ToString());
             Pacient pa = new Pacient();
@@ -356,6 +364,103 @@ namespace Proyecto_ED1.Controllers
             }
             return View(pa);
         }
+
+        public IActionResult simIndex()
+        {
+            if (!sim)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction();
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult simIndex(IFormCollection collection)
+        {
+            try
+            {
+                simDep = collection["Departamento"];
+                simMun = collection["Municipio"];
+
+                for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
+                {
+                    if (Singleton.Instance.hashTable[i] != null)
+                    {
+                        foreach (var item in Singleton.Instance.hashTable[i])
+                        {
+                            if (item.Departamento == simDep && item.Municipio == simMun && !item.Vaccinated)
+                            {
+                                Singleton.Instance.PQueue.Add(item.Priority, i);
+                            }
+                        }
+                    }
+                }
+
+                return RedirectToAction(nameof(simPacient));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        public IActionResult simPacient()
+        {
+            if (Singleton.Instance.PQueue.Peek() == null)
+            {
+                return View();
+            }
+            else
+            {
+                pacientPos = Singleton.Instance.PQueue.Peek().Data;
+                pacientPrio = Singleton.Instance.PQueue.Peek().Key;
+
+                foreach (var item in Singleton.Instance.hashTable[pacientPos])
+                {
+                    if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == pacientPrio && !item.Vaccinated)
+                    {
+                        return View(item);
+                    }
+                }
+            }
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult vaccinatePacient(IFormCollection collection)
+        {
+            Singleton.Instance.PQueue.Pop();
+            foreach (var item in Singleton.Instance.hashTable[pacientPos])
+            {
+                if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == pacientPrio && !item.Vaccinated)
+                {
+                    item.Vaccinated = true;
+                }
+            }
+            return RedirectToAction(nameof(simPacient));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult reassignPacient(IFormCollection collection)
+        {
+            Singleton.Instance.PQueue.Pop();
+            foreach (var item in Singleton.Instance.hashTable[pacientPos])
+            {
+                if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == pacientPrio && !item.Vaccinated)
+                {
+                    item.Priority += 10;
+                }
+            }
+            Singleton.Instance.PQueue.Add(pacientPrio + 10, pacientPos);
+            return RedirectToAction(nameof(simPacient));
+        }
+
         public int getHashcode(string key)
         {
             byte[] code = Encoding.ASCII.GetBytes(key);
@@ -378,7 +483,7 @@ namespace Proyecto_ED1.Controllers
                 {
                     foreach (var item in Singleton.Instance.hashTable[i])
                     {
-                        writer.WriteLine(item.Name + ";" + item.LName + ";" + item.CUI + ";" + item.Departamento + ";" + item.Municipio + ";" + item.Priority + ";" + item.Age + ";" + item.Occupation + ";" + item.Details + ";" + item.Diseases);
+                        writer.WriteLine(item.Name + ";" + item.LName + ";" + item.CUI + ";" + item.Departamento + ";" + item.Municipio + ";" + item.Priority + ";" + item.Age + ";" + item.Occupation + ";" + item.Details + ";" + item.Diseases + ";" + item.Vaccinated);
                     }
                 }
             }
