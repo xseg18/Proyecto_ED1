@@ -19,7 +19,7 @@ namespace Proyecto_ED1.Controllers
     public class HomeController : Controller
     {
         public static string SN, LN, simDep, simMun;
-        public static int pacientPrio, pacientPos;
+        public static int pacientPrio, pacientPos, dayTotal;
         public static bool start = false, sim = false;
         
         private readonly ILogger<HomeController> _logger;
@@ -77,7 +77,10 @@ namespace Proyecto_ED1.Controllers
                             Singleton.Instance.Nombre.Add(fields[0].ToUpper(), getHashcode(fields[2]));
                             Singleton.Instance.Apellido.Add(fields[1].ToUpper(), getHashcode(fields[2]));
                             Singleton.Instance.CUI.Add(Convert.ToInt64(fields[2]), getHashcode(fields[2]));
-                            Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(fields[3] + ", " + fields[4])].Add(Convert.ToInt32(fields[5]), getHashcode(fields[2]));
+                            if (!Convert.ToBoolean(fields[10]))
+                            {
+                                Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(fields[3] + ", " + fields[4])].Add(Convert.ToInt32(fields[5]), getHashcode(fields[2]));
+                            }
                         }
                     }
                 }
@@ -388,7 +391,7 @@ namespace Proyecto_ED1.Controllers
             }
             else
             {
-                return RedirectToAction();
+                return RedirectToAction(nameof(simPacient));
             }
         }
 
@@ -410,24 +413,60 @@ namespace Proyecto_ED1.Controllers
 
         public IActionResult simPacient()
         {
-            if (Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek() == null)
+            if (Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek() != null)
             {
-                return RedirectToAction(nameof(Index));
+                if (dayTotal < 3)
+                {
+                    pacientPos = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek().Data;
+                    pacientPrio = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek().Key;
+
+                    foreach (var item in Singleton.Instance.hashTable[pacientPos])
+                    {
+                        if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == pacientPrio && !item.Vaccinated)
+                        {
+                            return View(item);
+                        }
+                    }
+                    //Nunca entra aquí juasjuasjuas
+                    return View();
+                }
+                else
+                {
+                    //Vista de fin del día
+                    return RedirectToAction(nameof(dayEnd));
+                }
             }
             else
             {
-                pacientPos = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek().Data;
-                pacientPrio = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek().Key;
-
-                foreach (var item in Singleton.Instance.hashTable[pacientPos])
-                {
-                    if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == pacientPrio && !item.Vaccinated)
-                    {
-                        return View(item);
-                    }
-                }
+                //Vista de fin de la simulación
+                return RedirectToAction(nameof(simEnd));
             }
+        }
+
+        public IActionResult simEnd()
+        {
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult simEnd(IFormCollection collection)
+        {
+            sim = false;
+            return RedirectToAction(nameof(simIndex));
+        }
+
+        public IActionResult dayEnd()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult dayEnd(IFormCollection collection)
+        {
+            dayTotal = 0;
+            return RedirectToAction(nameof(simPacient));
         }
 
         [HttpPost]
@@ -442,6 +481,8 @@ namespace Proyecto_ED1.Controllers
                     item.Vaccinated = true;
                 }
             }
+            dayTotal++;
+            updateFile();
             return RedirectToAction(nameof(simPacient));
         }
 
@@ -458,6 +499,8 @@ namespace Proyecto_ED1.Controllers
                 }
             }
             Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Add(pacientPrio + 10, pacientPos);
+            dayTotal++;
+            updateFile();
             return RedirectToAction(nameof(simPacient));
         }
 
