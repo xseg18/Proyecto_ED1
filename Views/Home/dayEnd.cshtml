@@ -6,7 +6,10 @@
 <div class="text-center">
     <h3 class="display-4">Fin del Día</h3>
     <hr />
-    <p class="text-center">A continuación encontrará </p>
+    <p>A continuación encontrará </p>
+    <p style="font-size:larger">Departamento: @ViewData["Departamento"]</p>
+    <p style="font-size:larger">Municipio: @ViewData["Municipio"]</p>
+    <p style="font-size:larger">Nacional: @ViewData["Nacional"]</p>
 
     <form asp-action="dayEnd">
         <div class="form-group">

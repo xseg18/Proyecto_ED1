@@ -445,6 +445,9 @@ namespace Proyecto_ED1.Controllers
 
         public IActionResult simEnd()
         {
+            ViewData["Departamento"] = percentDep() + "%";
+            ViewData["Municipio"] = percentMun() + "%";
+            ViewData["Nacional"] = percentNac() + "%";
             return View();
         }
 
@@ -458,6 +461,9 @@ namespace Proyecto_ED1.Controllers
 
         public IActionResult dayEnd()
         {
+            ViewData["Departamento"] = percentDep() + "%";
+            ViewData["Municipio"] = percentMun() + "%";
+            ViewData["Nacional"] = percentNac() + "%";
             return View();
         }
 
@@ -531,6 +537,72 @@ namespace Proyecto_ED1.Controllers
                 }
             }
             writer.Close();
+        }
+
+        public int percentDep()
+        {
+            int total = 0, vacunados = 0;
+            for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
+            {
+                if (Singleton.Instance.hashTable[i] != null)
+                {
+                    foreach (var item in Singleton.Instance.hashTable[i])
+                    {
+                        if (item.Departamento == simDep)
+                        {
+                            total++;
+                            if (item.Vaccinated)
+                            {
+                                vacunados++;
+                            }
+                        }
+                    }
+                }
+            }
+            return (vacunados / total) * 100;
+        }
+
+        public int percentMun()
+        {
+            int total = 0, vacunados = 0;
+            for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
+            {
+                if (Singleton.Instance.hashTable[i] != null)
+                {
+                    foreach (var item in Singleton.Instance.hashTable[i])
+                    {
+                        if (item.Departamento == simDep && item.Municipio == simMun)
+                        {
+                            total++;
+                            if (item.Vaccinated)
+                            {
+                                vacunados++;
+                            }
+                        }
+                    }
+                }
+            }
+            return (vacunados / total) * 100;
+        }
+
+        public int percentNac()
+        {
+            int total = 0, vacunados = 0;
+            for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
+            {
+                if (Singleton.Instance.hashTable[i] != null)
+                {
+                    foreach (var item in Singleton.Instance.hashTable[i])
+                    {
+                        total++;
+                        if (item.Vaccinated)
+                        {
+                            vacunados++;
+                        }
+                    }
+                }
+            }
+            return (vacunados / total) * 100;
         }
     }
 }
