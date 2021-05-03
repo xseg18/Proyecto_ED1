@@ -33,6 +33,7 @@ namespace Proyecto_ED1.Controllers
         {
             try
             {
+                //Boolean para que no se dupliquen los datos en el archivo de almacenamiento
                 if (!start)
                 {
                     start = true;
@@ -57,17 +58,26 @@ namespace Proyecto_ED1.Controllers
                                 Age = fields[6],
                                 Occupation = fields[7],
                                 Details = fields[8],
-                                Diseases = fields[9]
+                                Diseases = fields[9],
+                                Vaccinated = Convert.ToBoolean(fields[10])
                             };
-
+                            //Verificar que la posición en la tabla hash no sea null
                             if (Singleton.Instance.hashTable[getHashcode(fields[2])] == null)
                             {
                                 Singleton.Instance.hashTable[getHashcode(fields[2])] = new ELineales.Lista<Pacient>();
                             }
+                            //Verificar si es la primera vez que se ingresa dicho departamento y municipio
+                            if (Singleton.Instance.simIndex.IndexOf(fields[3] + ", " + fields[4]) == -1)
+                            {
+                                Singleton.Instance.simIndex.Add(fields[3] + ", " + fields[4]);
+                                Singleton.Instance.simQueue.Add(new E_Arboles.PriorityQueue<int, int>(20));
+                            }
+                            //Añade toda la información a las estructuras correspondientes
                             Singleton.Instance.hashTable[getHashcode(fields[2])].Add(newPacient);
                             Singleton.Instance.Nombre.Add(fields[0].ToUpper(), getHashcode(fields[2]));
                             Singleton.Instance.Apellido.Add(fields[1].ToUpper(), getHashcode(fields[2]));
                             Singleton.Instance.CUI.Add(Convert.ToInt64(fields[2]), getHashcode(fields[2]));
+                            Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(fields[3] + ", " + fields[4])].Add(Convert.ToInt32(fields[5]), getHashcode(fields[2]));
                         }
                     }
                 }
@@ -166,18 +176,23 @@ namespace Proyecto_ED1.Controllers
                         goto skip;
                     }
                 skip:
-                    int pos = getHashcode(Convert.ToString(newPacient.CUI));
-
-                    if (Singleton.Instance.hashTable[pos] == null)
+                    //Verificar que la posición en la tabla hash no sea null
+                    if (Singleton.Instance.hashTable[getHashcode(Convert.ToString(newPacient.CUI))] == null)
                     {
-                        Singleton.Instance.hashTable[pos] = new ELineales.Lista<Pacient>();
+                        Singleton.Instance.hashTable[getHashcode(Convert.ToString(newPacient.CUI))] = new ELineales.Lista<Pacient>();
                     }
-
-                    Singleton.Instance.hashTable[pos].Add(newPacient);
-                    Singleton.Instance.Nombre.Add(newPacient.Name, pos);
-                    Singleton.Instance.Apellido.Add(newPacient.LName, pos);
-                    Singleton.Instance.CUI.Add(newPacient.CUI, pos);
-                    Singleton.Instance.PQueue.Add(newPacient.Priority, pos);
+                    //Verificar si es la primera vez que se ingresa dicho departamento y municipio
+                    if (Singleton.Instance.simIndex.IndexOf(newPacient.Departamento + ", " + newPacient.Municipio) == -1)
+                    {
+                        Singleton.Instance.simIndex.Add(newPacient.Departamento + ", " + newPacient.Municipio);
+                        Singleton.Instance.simQueue.Add(new E_Arboles.PriorityQueue<int, int>(20));
+                    }
+                    //Añade toda la información a las estructuras correspondientes
+                    Singleton.Instance.hashTable[getHashcode(Convert.ToString(newPacient.CUI))].Add(newPacient);
+                    Singleton.Instance.Nombre.Add(newPacient.Name, getHashcode(Convert.ToString(newPacient.CUI)));
+                    Singleton.Instance.Apellido.Add(newPacient.LName, getHashcode(Convert.ToString(newPacient.CUI)));
+                    Singleton.Instance.CUI.Add(newPacient.CUI, getHashcode(Convert.ToString(newPacient.CUI)));
+                    Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(newPacient.Departamento + ", " + newPacient.Municipio)].Add(newPacient.Priority, getHashcode(Convert.ToString(newPacient.CUI)));
 
                     ViewData["Success"] = "Paciente agregado correctamente.";
                     updateFile();
@@ -385,21 +400,6 @@ namespace Proyecto_ED1.Controllers
             {
                 simDep = collection["Departamento"];
                 simMun = collection["Municipio"];
-
-                for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
-                {
-                    if (Singleton.Instance.hashTable[i] != null)
-                    {
-                        foreach (var item in Singleton.Instance.hashTable[i])
-                        {
-                            if (item.Departamento == simDep && item.Municipio == simMun && !item.Vaccinated)
-                            {
-                                Singleton.Instance.PQueue.Add(item.Priority, i);
-                            }
-                        }
-                    }
-                }
-
                 return RedirectToAction(nameof(simPacient));
             }
             catch
@@ -410,14 +410,14 @@ namespace Proyecto_ED1.Controllers
 
         public IActionResult simPacient()
         {
-            if (Singleton.Instance.PQueue.Peek() == null)
+            if (Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek() == null)
             {
-                return View();
+                return RedirectToAction(nameof(Index));
             }
             else
             {
-                pacientPos = Singleton.Instance.PQueue.Peek().Data;
-                pacientPrio = Singleton.Instance.PQueue.Peek().Key;
+                pacientPos = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek().Data;
+                pacientPrio = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek().Key;
 
                 foreach (var item in Singleton.Instance.hashTable[pacientPos])
                 {
@@ -434,7 +434,7 @@ namespace Proyecto_ED1.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult vaccinatePacient(IFormCollection collection)
         {
-            Singleton.Instance.PQueue.Pop();
+            Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Pop();
             foreach (var item in Singleton.Instance.hashTable[pacientPos])
             {
                 if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == pacientPrio && !item.Vaccinated)
@@ -449,7 +449,7 @@ namespace Proyecto_ED1.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult reassignPacient(IFormCollection collection)
         {
-            Singleton.Instance.PQueue.Pop();
+            Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Pop();
             foreach (var item in Singleton.Instance.hashTable[pacientPos])
             {
                 if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == pacientPrio && !item.Vaccinated)
@@ -457,7 +457,7 @@ namespace Proyecto_ED1.Controllers
                     item.Priority += 10;
                 }
             }
-            Singleton.Instance.PQueue.Add(pacientPrio + 10, pacientPos);
+            Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Add(pacientPrio + 10, pacientPos);
             return RedirectToAction(nameof(simPacient));
         }
 

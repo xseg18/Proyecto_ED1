@@ -78,7 +78,8 @@ namespace ELineales
 		{
 			int pos = 0;
 			Node actual = Top;
-			while (actual.Next != null)
+
+			while (actual != null)
 			{
 				if (actual.Data.Equals(item))
 				{

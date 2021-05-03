@@ -13,7 +13,8 @@ namespace Proyecto_ED1.Models.Data
         public E_Arboles.AVL<string, int> Apellido;
         public E_Arboles.AVL<long, int> CUI;
         public ELineales.Lista<Pacient>[] hashTable;
-        public E_Arboles.PriorityQueue<int, int> PQueue;
+        public ELineales.Lista<string> simIndex;
+        public ELineales.Lista<E_Arboles.PriorityQueue<int, int>> simQueue;
         public ELineales.Lista<Pacient> SearchList;
 
         private Singleton()
@@ -22,7 +23,8 @@ namespace Proyecto_ED1.Models.Data
             Apellido = new E_Arboles.AVL<string, int>();
             CUI = new E_Arboles.AVL<long, int>();
             hashTable = new ELineales.Lista<Pacient>[20];
-            PQueue = new E_Arboles.PriorityQueue<int, int>(20);
+            simIndex = new ELineales.Lista<string>();
+            simQueue = new ELineales.Lista<E_Arboles.PriorityQueue<int, int>>();
             SearchList = new ELineales.Lista<Pacient>();
         }
 
