@@ -286,6 +286,8 @@ namespace Proyecto_ED1.Controllers
         {
             return View();
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult SearchLN(IFormCollection collection)
         {
             try
@@ -314,7 +316,7 @@ namespace Proyecto_ED1.Controllers
                         {
                             foreach (Pacient p in Singleton.Instance.hashTable[hashpos[i]])
                             {
-                                if (p.Name == collection["LName"])
+                                if (p.LName == collection["LName"].ToString().ToUpper())
                                 {
                                     Singleton.Instance.SearchList.Add(p);
                                 }
@@ -334,12 +336,14 @@ namespace Proyecto_ED1.Controllers
         {
             return View();
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult SearchC(IFormCollection collection)
         {
             try
             {
                 Singleton.Instance.SearchList.Clear();
-                int hashpos = Singleton.Instance.CUI.Find(Convert.ToInt32(collection["CUI"]));
+                int hashpos = Singleton.Instance.CUI.Find(Convert.ToInt64(collection["CUI"]));
                 if (Singleton.Instance.hashTable[hashpos] == null)
                 {
                     ViewData["Error"] = "El paciente que busca todavía no se ha registrado en la lista de espera." +
@@ -350,7 +354,7 @@ namespace Proyecto_ED1.Controllers
                 {
                     foreach(Pacient p in Singleton.Instance.hashTable[hashpos])
                     {
-                        if (p.CUI == collection["CUI"])
+                        if (p.CUI == Convert.ToInt64(collection["CUI"]))
                         {
                             Singleton.Instance.SearchList.Add(p);
                         }
@@ -370,8 +374,9 @@ namespace Proyecto_ED1.Controllers
             return View(Singleton.Instance.SearchList);
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(long id)
         {
+            
             int pos = getHashcode(id.ToString());
             Pacient pa = new Pacient();
             foreach(var p in Singleton.Instance.hashTable[pos])

@@ -59,8 +59,7 @@
                 @Html.DisplayFor(modelItem => item.Priority)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { id = item.CUI }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.CUI })
+                @Html.ActionLink("Edit", "Edit", new { id = item.CUI }) |
             </td>
         </tr>
         }
