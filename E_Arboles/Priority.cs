@@ -37,10 +37,11 @@ namespace E_Arboles
         }
         Node root;
         static Node[] Queue;
-        static int pos = 1;
+        static int pos;
         public PriorityQueue(int x)
         {
             Queue = new Node[x];
+            pos = 1;
         }
         public void Add(T k, Y d)
         {
