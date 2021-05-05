@@ -1,2 +1,4 @@
-JUAN;GONZÁLEZ;3602038410101;Alta Verapaz;Cobán;9;18-39;Estudiante;Otro;Ninguna de las anteriores;True
-JUAN;GONZÁLEZ;3602038410101;Alta Verapaz;Cobán;1;40-49;Trabajador;Salud;Ninguna de las anteriores;True
+XIMENA;GOBERN;3602038410102;Alta Verapaz;Cobán;1;40-49;Trabajador;Salud;Enfermedades inmunosupresoras (VIH, Sida, cáncer, etc.);;False
+GILLIUS;GOD;3602038410104;Alta Verapaz;Cobán;9;18-39;Estudiante;Otro;Ninguna de las anteriores;;False
+JUAN;GONZÁLEZ;3602038410101;Alta Verapaz;Cobán;3;18-39;Estudiante;Otro;Enfermedades inmunosupresoras (VIH, Sida, cáncer, etc.);;False
+HANS;SAMA;3602038410103;Alta Verapaz;Cobán;9;18-39;Estudiante;Otro;Ninguna de las anteriores;;False

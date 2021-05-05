@@ -59,7 +59,8 @@ namespace Proyecto_ED1.Controllers
                                 Occupation = fields[7],
                                 Details = fields[8],
                                 Diseases = fields[9],
-                                Vaccinated = Convert.ToBoolean(fields[10])
+                                Observations = fields[10],
+                                Vaccinated = Convert.ToBoolean(fields[11])
                             };
                             //Verificar que la posición en la tabla hash no sea null
                             if (Singleton.Instance.hashTable[getHashcode(fields[2])] == null)
@@ -77,7 +78,7 @@ namespace Proyecto_ED1.Controllers
                             Singleton.Instance.Nombre.Add(fields[0].ToUpper(), getHashcode(fields[2]));
                             Singleton.Instance.Apellido.Add(fields[1].ToUpper(), getHashcode(fields[2]));
                             Singleton.Instance.CUI.Add(Convert.ToInt64(fields[2]), getHashcode(fields[2]));
-                            if (!Convert.ToBoolean(fields[10]))
+                            if (!Convert.ToBoolean(fields[11]))
                             {
                                 Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(fields[3] + ", " + fields[4])].Add(Convert.ToInt32(fields[5]), getHashcode(fields[2]));
                             }
@@ -413,7 +414,7 @@ namespace Proyecto_ED1.Controllers
 
         public IActionResult simPacient()
         {
-            if (Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek() != null)
+            if (Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun) != -1 && Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek() != null)
             {
                 if (dayTotal < 3)
                 {
@@ -484,6 +485,7 @@ namespace Proyecto_ED1.Controllers
             {
                 if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == pacientPrio && !item.Vaccinated)
                 {
+                    item.Observations = collection["Observations"];
                     item.Vaccinated = true;
                 }
             }
@@ -532,16 +534,16 @@ namespace Proyecto_ED1.Controllers
                 {
                     foreach (var item in Singleton.Instance.hashTable[i])
                     {
-                        writer.WriteLine(item.Name + ";" + item.LName + ";" + item.CUI + ";" + item.Departamento + ";" + item.Municipio + ";" + item.Priority + ";" + item.Age + ";" + item.Occupation + ";" + item.Details + ";" + item.Diseases + ";" + item.Vaccinated);
+                        writer.WriteLine(item.Name + ";" + item.LName + ";" + item.CUI + ";" + item.Departamento + ";" + item.Municipio + ";" + item.Priority + ";" + item.Age + ";" + item.Occupation + ";" + item.Details + ";" + item.Diseases + ";" + item.Observations + ";" + item.Vaccinated);
                     }
                 }
             }
             writer.Close();
         }
 
-        public int percentDep()
+        public decimal percentDep()
         {
-            int total = 0, vacunados = 0;
+            decimal total = 0, vacunados = 0;
             for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
             {
                 if (Singleton.Instance.hashTable[i] != null)
@@ -559,12 +561,16 @@ namespace Proyecto_ED1.Controllers
                     }
                 }
             }
+            if (total == 0)
+            {
+                return 0;
+            }
             return (vacunados / total) * 100;
         }
 
-        public int percentMun()
+        public decimal percentMun()
         {
-            int total = 0, vacunados = 0;
+            decimal total = 0, vacunados = 0;
             for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
             {
                 if (Singleton.Instance.hashTable[i] != null)
@@ -582,12 +588,16 @@ namespace Proyecto_ED1.Controllers
                     }
                 }
             }
+            if (total == 0)
+            {
+                return 0;
+            }
             return (vacunados / total) * 100;
         }
 
-        public int percentNac()
+        public decimal percentNac()
         {
-            int total = 0, vacunados = 0;
+            decimal total = 0, vacunados = 0;
             for (int i = 0; i < Singleton.Instance.hashTable.Length; i++)
             {
                 if (Singleton.Instance.hashTable[i] != null)
@@ -601,6 +611,10 @@ namespace Proyecto_ED1.Controllers
                         }
                     }
                 }
+            }
+            if (total == 0)
+            {
+                return 0;
             }
             return (vacunados / total) * 100;
         }
