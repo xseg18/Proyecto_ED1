@@ -420,7 +420,6 @@ namespace Proyecto_ED1.Controllers
                 {
                     pacientPos = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek().Data;
                     pacientPrio = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek().Key;
-
                     foreach (var item in Singleton.Instance.hashTable[pacientPos])
                     {
                         if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == pacientPrio && !item.Vaccinated)

@@ -104,7 +104,7 @@ namespace E_Arboles
                 {
                     if (Root.Key.CompareTo(Root.Right.Key) > 0)
                     {
-                        Swap(Root, Root.Left);
+                        Swap(Root, Root.Right);
                         if (Root != root)
                         {
                             Balance(prev, prev.Parent);
@@ -134,14 +134,14 @@ namespace E_Arboles
 
         public Y Pop()
         {
-            Node safe = root;
-            Node remp = FindLast();
+            Node safe = new Node(root.Key, root.Data);
             if (Queue[2] != null)
             {
+                Node remp = FindLast();
                 root.Key = remp.Key;
                 root.Data = remp.Data;
                 Balance(root, null);
-                for (int i = 1; i < Queue.Length-1; i++)
+                for (int i = pos; i < Queue.Length-1; i++)
                 {
                     Queue[i] = Queue[i + 1];
                 } 
@@ -149,6 +149,7 @@ namespace E_Arboles
             else
             {
                 root = null;
+                Queue[1] = null;
             }
             return safe.Data;
         }
@@ -162,10 +163,12 @@ namespace E_Arboles
                 if ((pos - 1) % 2 == 0)
                 {
                     parentdata.Left = null;
+                    Queue[pos - 1] = null;
                 }
                 else
                 {
                     parentdata.Right = null;
+                    Queue[pos - 1] = null;
                 }
                 pos--;
                 return last;
