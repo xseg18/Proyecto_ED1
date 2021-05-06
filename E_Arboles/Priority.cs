@@ -214,14 +214,14 @@ namespace E_Arboles
             pos = 1;
         }
 
-        public Y[] ReturnQueue()
+        public Node[] ReturnQueue()
         {
-            Y[] rqueue = new Y[Queue.Length];
+            Node[] rqueue = new Node[Queue.Length];
             for (int i = 0; i < Queue.Length; i++)
             {
                 if(Queue[i] != null)
                 {
-                    rqueue[i] = Queue[i].Data;
+                    rqueue[i] = Queue[i];
                 }
             }
             return rqueue;

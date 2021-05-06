@@ -19,7 +19,7 @@ namespace Proyecto_ED1.Controllers
     public class HomeController : Controller
     {
         public static string SN, LN, simDep, simMun;
-        public static int pacientPrio, pacientPos, dayTotal;
+        public static int pacientPrio, pacientPos, simQty, dayTotal;
         public static bool start = false, sim = false;
         
         private readonly ILogger<HomeController> _logger;
@@ -72,6 +72,7 @@ namespace Proyecto_ED1.Controllers
                             {
                                 Singleton.Instance.simIndex.Add(fields[3] + ", " + fields[4]);
                                 Singleton.Instance.simQueue.Add(new E_Arboles.PriorityQueue<int, int>(20));
+                                Singleton.Instance.simVaccinated.Add(new ELineales.Lista<int>());
                             }
                             //Añade toda la información a las estructuras correspondientes
                             Singleton.Instance.hashTable[getHashcode(fields[2])].Add(newPacient);
@@ -81,6 +82,13 @@ namespace Proyecto_ED1.Controllers
                             if (!Convert.ToBoolean(fields[11]))
                             {
                                 Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(fields[3] + ", " + fields[4])].Add(Convert.ToInt32(fields[5]), getHashcode(fields[2]));
+                            }
+                            else
+                            {
+                                if (Singleton.Instance.simVaccinated[Singleton.Instance.simIndex.IndexOf(fields[3] + ", " + fields[4])].IndexOf(getHashcode(fields[2])) == -1)
+                                {
+                                    Singleton.Instance.simVaccinated[Singleton.Instance.simIndex.IndexOf(fields[3] + ", " + fields[4])].Add(getHashcode(fields[2]));
+                                }
                             }
                         }
                     }
@@ -409,6 +417,14 @@ namespace Proyecto_ED1.Controllers
             {
                 simDep = collection["Departamento"];
                 simMun = collection["Municipio"];
+                if (Convert.ToInt32(collection["Quantity"]) <= -3)
+                {
+                    simQty = 3;
+                }
+                else
+                {
+                    simQty = Convert.ToInt32(collection["Quantity"]);
+                }
                 return RedirectToAction(nameof(simPacient));
             }
             catch
@@ -421,7 +437,7 @@ namespace Proyecto_ED1.Controllers
         {
             if (Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun) != -1 && Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek() != null)
             {
-                if (dayTotal < 3)
+                if (dayTotal < simQty)
                 {
                     pacientPos = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek().Data;
                     pacientPrio = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Peek().Key;
@@ -480,6 +496,42 @@ namespace Proyecto_ED1.Controllers
             return RedirectToAction(nameof(simPacient));
         }
 
+        public IActionResult queueList()
+        {
+            Singleton.Instance.SearchList.Clear();
+            var queue = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].ReturnQueue();
+            foreach (var nodes in queue)
+            {
+                if (nodes != null)
+                {
+                    foreach (var item in Singleton.Instance.hashTable[nodes.Data])
+                    {
+                        if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == nodes.Key && !item.Vaccinated)
+                        {
+                            Singleton.Instance.SearchList.Add(item);
+                        }
+                    }
+                }
+            }
+            return View(Singleton.Instance.SearchList);
+        }
+
+        public IActionResult vaccinatedList()
+        {
+            Singleton.Instance.SearchList.Clear();
+            foreach (var nodes in Singleton.Instance.simVaccinated[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)])
+            {
+                foreach (var item in Singleton.Instance.hashTable[nodes])
+                {
+                    if (item.Departamento == simDep && item.Municipio == simMun && item.Vaccinated)
+                    {
+                        Singleton.Instance.SearchList.Add(item);
+                    }
+                }
+            }
+            return View(Singleton.Instance.SearchList);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult vaccinatePacient(IFormCollection collection)
@@ -491,6 +543,11 @@ namespace Proyecto_ED1.Controllers
                 {
                     item.Observations = collection["Observations"];
                     item.Vaccinated = true;
+
+                    if (Singleton.Instance.simVaccinated[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].IndexOf(getHashcode(Convert.ToString(item.CUI))) == -1)
+                    {
+                        Singleton.Instance.simVaccinated[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Add(getHashcode(Convert.ToString(item.CUI)));
+                    }
                 }
             }
             dayTotal++;

@@ -15,6 +15,7 @@ namespace Proyecto_ED1.Models.Data
         public ELineales.Lista<Pacient>[] hashTable;
         public ELineales.Lista<string> simIndex;
         public ELineales.Lista<E_Arboles.PriorityQueue<int, int>> simQueue;
+        public ELineales.Lista<ELineales.Lista<int>> simVaccinated;
         public ELineales.Lista<Pacient> SearchList;
 
         private Singleton()
@@ -25,6 +26,7 @@ namespace Proyecto_ED1.Models.Data
             hashTable = new ELineales.Lista<Pacient>[20];
             simIndex = new ELineales.Lista<string>();
             simQueue = new ELineales.Lista<E_Arboles.PriorityQueue<int, int>>();
+            simVaccinated = new ELineales.Lista<ELineales.Lista<int>>();
             SearchList = new ELineales.Lista<Pacient>();
         }
 
