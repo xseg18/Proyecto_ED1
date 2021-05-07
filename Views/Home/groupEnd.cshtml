@@ -4,16 +4,16 @@
 }
 
 <div class="text-center">
-    <h3 class="display-4">Fin del Día</h3>
+    <h3 class="display-4">Fin del Grupo</h3>
     <hr />
     <p>A continuación encontrará </p>
     <p style="font-size:larger">Departamento: @ViewData["Departamento"]</p>
     <p style="font-size:larger">Municipio: @ViewData["Municipio"]</p>
     <p style="font-size:larger">Nacional: @ViewData["Nacional"]</p>
 
-    <form asp-action="dayEnd">
+    <form asp-action="groupEnd">
         <div class="form-group">
-            <input type="submit" value="Siguiente Día" class="btn btn-primary" />
+            <input type="submit" value="Siguiente Grupo" class="btn btn-primary" />
         </div>
     </form>
     <form asp-action="simEnd">

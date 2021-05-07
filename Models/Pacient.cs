@@ -44,5 +44,8 @@ namespace Proyecto_ED1.Models
         [Display(Name = "Vacunado")]
         [Required]
         public bool Vaccinated { get; set; }
+        [Display(Name = "Fecha")]
+        [Required]
+        public DateTime Date { get; set; }
     }
 }

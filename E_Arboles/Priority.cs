@@ -35,9 +35,11 @@ namespace E_Arboles
         {
             get => Queue.Length;
         }
-        private Node root;
-        private Node[] Queue;
-        private int pos;
+
+        internal Node root;
+        internal Node[] Queue;
+        internal int pos;
+
         public PriorityQueue(int x)
         {
             Queue = new Node[x];

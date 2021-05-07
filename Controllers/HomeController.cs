@@ -46,7 +46,15 @@ namespace Proyecto_ED1.Controllers
                         while (!txtParser.EndOfData)
                         {
                             string[] fields = txtParser.ReadFields();
-
+                            DateTime Date;
+                            if(fields[12] == "")
+                            {
+                                Date = default(DateTime);
+                            }
+                            else
+                            {
+                                Date = Convert.ToDateTime(fields[12]);
+                            }
                             var newPacient = new Pacient
                             {
                                 Name = fields[0].ToUpper(),
@@ -60,7 +68,8 @@ namespace Proyecto_ED1.Controllers
                                 Details = fields[8],
                                 Diseases = fields[9],
                                 Observations = fields[10],
-                                Vaccinated = Convert.ToBoolean(fields[11])
+                                Vaccinated = Convert.ToBoolean(fields[11]),
+                                Date = Date
                             };
                             //Verificar que la posición en la tabla hash no sea null
                             if (Singleton.Instance.hashTable[getHashcode(fields[2])] == null)
@@ -193,12 +202,25 @@ namespace Proyecto_ED1.Controllers
                     {
                         Singleton.Instance.hashTable[getHashcode(Convert.ToString(newPacient.CUI))] = new ELineales.Lista<Pacient>();
                     }
+                    else
+                    {
+                        //verifica que el CUI no se haya repetido
+                        foreach (var item in Singleton.Instance.hashTable[getHashcode(Convert.ToString(newPacient.CUI))])
+                        {
+                            if(item.CUI == Convert.ToInt64(collection["CUI"]))
+                            {
+                                ViewData["Error"] = "El CUI ingresado ya ha sido registrado. Intente de nuevo por favor.";
+                                return View();
+                            }
+                        }
+                    }
                     //Verificar si es la primera vez que se ingresa dicho departamento y municipio
                     if (Singleton.Instance.simIndex.IndexOf(newPacient.Departamento + ", " + newPacient.Municipio) == -1)
                     {
                         Singleton.Instance.simIndex.Add(newPacient.Departamento + ", " + newPacient.Municipio);
                         Singleton.Instance.simQueue.Add(new E_Arboles.PriorityQueue<int, int>(20));
                     }
+                    //Verifica que el CUI no se haya ingresado antes
                     //Añade toda la información a las estructuras correspondientes
                     Singleton.Instance.hashTable[getHashcode(Convert.ToString(newPacient.CUI))].Add(newPacient);
                     Singleton.Instance.Nombre.Add(newPacient.Name, getHashcode(Convert.ToString(newPacient.CUI)));
@@ -454,7 +476,7 @@ namespace Proyecto_ED1.Controllers
                 else
                 {
                     //Vista de fin del día
-                    return RedirectToAction(nameof(dayEnd));
+                    return RedirectToAction(nameof(groupEnd));
                 }
             }
             else
@@ -477,20 +499,21 @@ namespace Proyecto_ED1.Controllers
         public IActionResult simEnd(IFormCollection collection)
         {
             sim = false;
+            dayTotal = 0;
             return RedirectToAction(nameof(simIndex));
         }
 
-        public IActionResult dayEnd()
+        public IActionResult groupEnd()
         {
-            ViewData["Departamento"] = percentDep() + "%";
-            ViewData["Municipio"] = percentMun() + "%";
-            ViewData["Nacional"] = percentNac() + "%";
+            ViewData["Departamento"] = percentDep().ToString("#.##") + "%";
+            ViewData["Municipio"] = percentMun().ToString("#.##") + "%";
+            ViewData["Nacional"] = percentNac().ToString("#.##") + "%";
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult dayEnd(IFormCollection collection)
+        public IActionResult groupEnd(IFormCollection collection)
         {
             dayTotal = 0;
             return RedirectToAction(nameof(simPacient));
@@ -543,7 +566,7 @@ namespace Proyecto_ED1.Controllers
                 {
                     item.Observations = collection["Observations"];
                     item.Vaccinated = true;
-
+                    item.Date = DateTime.Now;
                     if (Singleton.Instance.simVaccinated[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].IndexOf(getHashcode(Convert.ToString(item.CUI))) == -1)
                     {
                         Singleton.Instance.simVaccinated[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].Add(getHashcode(Convert.ToString(item.CUI)));
@@ -595,7 +618,7 @@ namespace Proyecto_ED1.Controllers
                 {
                     foreach (var item in Singleton.Instance.hashTable[i])
                     {
-                        writer.WriteLine(item.Name + ";" + item.LName + ";" + item.CUI + ";" + item.Departamento + ";" + item.Municipio + ";" + item.Priority + ";" + item.Age + ";" + item.Occupation + ";" + item.Details + ";" + item.Diseases + ";" + item.Observations + ";" + item.Vaccinated);
+                        writer.WriteLine(item.Name + ";" + item.LName + ";" + item.CUI + ";" + item.Departamento + ";" + item.Municipio + ";" + item.Priority + ";" + item.Age + ";" + item.Occupation + ";" + item.Details + ";" + item.Diseases + ";" + item.Observations + ";" + item.Vaccinated + ";" + item.Date);
                     }
                 }
             }
