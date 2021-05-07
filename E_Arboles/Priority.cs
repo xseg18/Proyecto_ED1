@@ -35,9 +35,9 @@ namespace E_Arboles
         {
             get => Queue.Length;
         }
-        Node root;
-        static Node[] Queue;
-        static int pos;
+        private Node root;
+        private Node[] Queue;
+        private int pos;
         public PriorityQueue(int x)
         {
             Queue = new Node[x];
@@ -160,7 +160,7 @@ namespace E_Arboles
             if (pos - 1 != 1)
             {
                 Node last = Queue[pos - 1];
-                Node parentdata = last.Parent;
+                Node parentdata = Find(last.Parent, root);
                 if ((pos - 1) % 2 == 0)
                 {
                     parentdata.Left = null;
@@ -184,7 +184,7 @@ namespace E_Arboles
         {
             if (top != null)
             {
-                if (top.Data.Equals(search.Data) && top.Key.Equals(search.Data))
+                if (top.Data.Equals(search.Data) && top.Key.Equals(search.Key))
                 {
                     return top;
                 }

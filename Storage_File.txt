@@ -1,7 +1,7 @@
 XIMENA;GOBERN;3602038410102;Alta Verapaz;Cobán;1;40-49;Trabajador;Salud;Enfermedades inmunosupresoras (VIH, Sida, cáncer, etc.);;True
 EREN;JEAGER;3825656471102;Guatemala;Villa Nueva;3;50-69;Jubilado;Otro;Enfermedades crónicas (Diabetes, asma, hipertensión, etc.);;False
-REINER;TRAIDOR;3623636269100;El Progreso;Guastatoya;1;18-39;Estudiante;Estudiante de medicina en 4to año (REALIZANDO PRÁCTICAS);Ninguna de las anteriores;;False
-MIKASA;ACKERMAN;3724646370101;El Progreso;Guastatoya;5;18-39;Trabajador;Seguridad Nacional o servicios básicos;Ninguna de las anteriores;;False
-GILLIUS;GOD;3602038410104;Alta Verapaz;Cobán;9;18-39;Estudiante;Otro;Ninguna de las anteriores;;False
-JUAN;GONZÁLEZ;3602038410101;Alta Verapaz;Cobán;3;18-39;Estudiante;Otro;Enfermedades inmunosupresoras (VIH, Sida, cáncer, etc.);;False
-HANsS;SAMA;3602038410103;Alta Verapaz;Cobán;9;18-39;Estudiante;Otro;Ninguna de las anteriores;;False
+REINER;TRAIDOR;3623636269100;El Progreso;Guastatoya;1;18-39;Estudiante;Estudiante de medicina en 4to año (REALIZANDO PRÁCTICAS);Ninguna de las anteriores;;True
+MIKASA;ACKERMAN;3724646370101;El Progreso;Guastatoya;5;18-39;Trabajador;Seguridad Nacional o servicios básicos;Ninguna de las anteriores;;True
+GILLIUS;GOD;3602038410104;Alta Verapaz;Cobán;9;18-39;Estudiante;Otro;Ninguna de las anteriores;;True
+JUAN;GONZÁLEZ;3602038410101;Alta Verapaz;Cobán;3;18-39;Estudiante;Otro;Enfermedades inmunosupresoras (VIH, Sida, cáncer, etc.);;True
+HANSS;SAMA;3602038410103;Alta Verapaz;Cobán;9;18-39;Estudiante;Otro;Ninguna de las anteriores;;True
