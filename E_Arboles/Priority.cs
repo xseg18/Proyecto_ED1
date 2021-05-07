@@ -116,7 +116,6 @@ namespace E_Arboles
                 }
                 Balance(Root.Left, Root);
                 Balance(Root.Right, Root);
-
             }
         }
 
@@ -144,10 +143,6 @@ namespace E_Arboles
                 root.Key = remp.Key;
                 root.Data = remp.Data;
                 Balance(root, null);
-                for (int i = pos; i < Queue.Length-1; i++)
-                {
-                    Queue[i] = Queue[i + 1];
-                } 
             }
             else
             {
@@ -204,16 +199,6 @@ namespace E_Arboles
             {
                 return null;
             }
-        }
-
-        public void Clear()
-        {
-            root = null;
-            for (int i = 0; i < Queue.Length; i++)
-            {
-                Queue[i] = null;
-            }
-            pos = 1;
         }
 
         public Node[] ReturnQueue()
