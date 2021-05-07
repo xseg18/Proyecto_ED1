@@ -219,6 +219,7 @@ namespace Proyecto_ED1.Controllers
                     {
                         Singleton.Instance.simIndex.Add(newPacient.Departamento + ", " + newPacient.Municipio);
                         Singleton.Instance.simQueue.Add(new E_Arboles.PriorityQueue<int, int>(20));
+                        Singleton.Instance.simVaccinated.Add(new ELineales.Lista<int>());
                     }
                     //Verifica que el CUI no se haya ingresado antes
                     //Añade toda la información a las estructuras correspondientes
@@ -523,16 +524,21 @@ namespace Proyecto_ED1.Controllers
         {
             Singleton.Instance.SearchList.Clear();
             var queue = Singleton.Instance.simQueue[Singleton.Instance.simIndex.IndexOf(simDep + ", " + simMun)].ReturnQueue();
+            ELineales.Lista<int> list = new ELineales.Lista<int>();
             foreach (var nodes in queue)
             {
                 if (nodes != null)
                 {
-                    foreach (var item in Singleton.Instance.hashTable[nodes.Data])
+                    if (list.IndexOf(nodes.Data) == -1)
                     {
-                        if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == nodes.Key && !item.Vaccinated)
+                        foreach (var item in Singleton.Instance.hashTable[nodes.Data])
                         {
-                            Singleton.Instance.SearchList.Add(item);
+                            if (item.Departamento == simDep && item.Municipio == simMun && item.Priority == nodes.Key && !item.Vaccinated)
+                            {
+                                Singleton.Instance.SearchList.Add(item);
+                            }
                         }
+                        list.Add(nodes.Data);
                     }
                 }
             }
