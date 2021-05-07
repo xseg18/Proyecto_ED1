@@ -466,9 +466,9 @@ namespace Proyecto_ED1.Controllers
 
         public IActionResult simEnd()
         {
-            ViewData["Departamento"] = percentDep() + "%";
-            ViewData["Municipio"] = percentMun() + "%";
-            ViewData["Nacional"] = percentNac() + "%";
+            ViewData["Departamento"] = percentDep().ToString("#.##") + "%";
+            ViewData["Municipio"] = percentMun().ToString("#.##") + "%";
+            ViewData["Nacional"] = percentNac().ToString("#.##") + "%";
             return View();
         }
 
